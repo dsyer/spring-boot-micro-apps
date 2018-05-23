@@ -38,6 +38,8 @@ The main class could be one of
 | com.example.mini.MiniApplication   | Spring Boot but with no autoconfiguration |
 | com.example.micro.MicroApplication | Raw Spring with no `@Configuration`       |
 
+|===
+
 The `thin.profile` could be empty (the default) for just `spring-boot-starter-webflux` dependencies, or you can try `jlog` for a reduced set of dependencies, e.g. leaving out `hibernate-validator`, `jackson`, and `logback`. Other choices add more dependencies (e.g. `actr` for `spring-boot-starter-actuator`).
 
 == Building a Native Image
