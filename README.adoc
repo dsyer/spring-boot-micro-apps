@@ -6,6 +6,7 @@ This project shows how to build "micro" applications with Spring and Spring Boot
 Build the jar:
 
 ```
+$ mvn install:install-file -Dfile=${JAVA_HOME}/jre/lib/svm/builder/svm.jar -DgroupId=com.oracle.svm -DartifactId=svm -Dversion=GraalVM-1.0.0-rc1 -Dpackaging=jar
 $ ./mvnw clean install
 ```
 
