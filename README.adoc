@@ -42,6 +42,8 @@ The main class could be one of
 
 The `thin.profile` could be empty (the default) for just `spring-boot-starter-webflux` dependencies, or you can try `jlog` for a reduced set of dependencies, e.g. leaving out `hibernate-validator`, `jackson`, and `logback`. Other choices add more dependencies (e.g. `actr` for `spring-boot-starter-actuator`).
 
+The apps are already systematically benchmarked here with regular JVMs: https://github.com/dsyer/spring-boot-startup-bench/blob/master/flux/README.adoc. The point of this project is just to extract them out of the JMH benchmarks, and make them easily executable as standalone apps.
+
 == Building a Native Image
 
 Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM).
