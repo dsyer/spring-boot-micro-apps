@@ -46,6 +46,8 @@ The apps are already systematically benchmarked here with regular JVMs: https://
 
 == Building a Native Image
 
+The `MicroApplication` ought to be convertible to a native binary image using the Graal tools (the others, maybe not so easy because they all use Spring more heavily). The netty reflection configuration we need is probably the same as the https://medium.com/graalvm/instant-netty-startup-using-graalvm-native-image-generation-ed6f14ff7692[blog], so we copied that over (hence the extra jar that needs to be installed above).
+
 Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM).
 
 Compute the classpath using the `jinj` profile so that we don't crash on a missing JSR330 class:
