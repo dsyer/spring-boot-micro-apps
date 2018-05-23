@@ -1,0 +1,97 @@
+[.lead]
+This project shows how to build "micro" applications with Spring and Spring Boot - the smallest, functional units, with the fewest dependencies and fastest start times
+
+== Building the Apps
+
+Build the jar:
+
+```
+$ ./mvnw clean install
+```
+
+Run it
+
+```
+$ java -jar target/micro-0.0.1-SNAPSHOT.jar 
+...
+2018-05-23 10:03:41.776 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 1.885 seconds (JVM running for 3.769)
+...
+```
+
+The default app is relatively full-bodied - it uses Spring Boot and auto-configuration.
+
+You can run the smaller apps using command line flags:
+
+```
+$ java -jar target/micro-0.0.1-SNAPSHOT.jar --thin.main=com.example.mini.MiniApplication --thin.profile=jlog
+...
+May 23, 2018 10:05:41 AM reactor.util.Loggers$Slf4JLogger info
+INFO: Started HttpServer on /127.0.0.1:8080
+```
+
+The main class could be one of 
+
+|===
+| Main                               | Description |
+| com.example.demo.DemoApplication   | (The default). Spring Boot with Webflux and full autoconfiguration |
+| com.example.mini.MiniApplication   | Spring Boot but with no autoconfiguration |
+| com.example.micro.MicroApplication | Raw Spring with no `@Configuration`       |
+
+The `thin.profile` could be empty (the default) for just `spring-boot-starter-webflux` dependencies, or you can try `jlog` for a reduced set of dependencies, e.g. leaving out `hibernate-validator`, `jackson`, and `logback`. Other choices add more dependencies (e.g. `actr` for `spring-boot-starter-actuator`).
+
+== Building a Native Image
+
+Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM).
+
+Compute the classpath using the `jinj` profile so that we don't crash on a missing JSR330 class:
+
+```
+$ CP=`java -jar target/micro-0.0.1-SNAPSHOT.jar --thin.classpath --thin.profile=jlog,jinj`
+```
+
+Then attempt to build an image (it crashes). Work in progress:
+
+```
+$ native-image -H:Name=micro -H:ReflectionConfigurationFiles=netty_reflection_config.json --report-unsupported-elements-at-runtime -cp $CP com.example.micro.MicroApplication
+Build on Server(pid: 11492, port: 26681)
+   classlist:   1,426.41 ms
+       (cap):   5,775.10 ms
+       setup:   6,010.72 ms
+    analysis:   2,698.61 ms
+fatal error: java.lang.NullPointerException
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+	at java.util.concurrent.ForkJoinTask.getThrowableException(ForkJoinTask.java:598)
+	at java.util.concurrent.ForkJoinTask.get(ForkJoinTask.java:1005)
+	at com.oracle.svm.hosted.NativeImageGenerator.run(NativeImageGenerator.java:398)
+	at com.oracle.svm.hosted.NativeImageGeneratorRunner.buildImage(NativeImageGeneratorRunner.java:240)
+	at com.oracle.svm.hosted.NativeImageGeneratorRunner.build(NativeImageGeneratorRunner.java:337)
+	at com.oracle.svm.hosted.server.NativeImageBuildServer.executeCompilation(NativeImageBuildServer.java:378)
+	at com.oracle.svm.hosted.server.NativeImageBuildServer.lambda$processCommand$8(NativeImageBuildServer.java:315)
+	at com.oracle.svm.hosted.server.NativeImageBuildServer.withJVMContext(NativeImageBuildServer.java:396)
+	at com.oracle.svm.hosted.server.NativeImageBuildServer.processCommand(NativeImageBuildServer.java:312)
+	at com.oracle.svm.hosted.server.NativeImageBuildServer.processRequest(NativeImageBuildServer.java:256)
+	at com.oracle.svm.hosted.server.NativeImageBuildServer.lambda$serve$7(NativeImageBuildServer.java:216)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.lang.NullPointerException
+	at com.oracle.svm.hosted.ameta.AnalysisConstantReflectionProvider.readFieldValue(AnalysisConstantReflectionProvider.java:70)
+	at com.oracle.graal.pointsto.ObjectScanner.scanField(ObjectScanner.java:111)
+	at com.oracle.graal.pointsto.ObjectScanner.doScan(ObjectScanner.java:263)
+	at com.oracle.graal.pointsto.ObjectScanner.finish(ObjectScanner.java:307)
+	at com.oracle.graal.pointsto.ObjectScanner.scanBootImageHeapRoots(ObjectScanner.java:78)
+	at com.oracle.graal.pointsto.ObjectScanner.scanBootImageHeapRoots(ObjectScanner.java:60)
+	at com.oracle.graal.pointsto.BigBang.checkObjectGraph(BigBang.java:581)
+	at com.oracle.graal.pointsto.BigBang.finish(BigBang.java:552)
+	at com.oracle.svm.hosted.NativeImageGenerator.doRun(NativeImageGenerator.java:653)
+	at com.oracle.svm.hosted.NativeImageGenerator.lambda$run$0(NativeImageGenerator.java:381)
+	at java.util.concurrent.ForkJoinTask$AdaptedRunnableAction.exec(ForkJoinTask.java:1386)
+	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
+	at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1056)
+	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1692)
+	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
+Error: Processing image build request failed
+```
