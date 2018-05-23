@@ -100,3 +100,5 @@ Caused by: java.lang.NullPointerException
 	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
 Error: Processing image build request failed
 ```
+
+See https://github.com/oracle/graal/issues/431.
