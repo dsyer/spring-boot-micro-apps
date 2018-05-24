@@ -34,7 +34,8 @@ The main class could be one of
 |===
 | Main                               | Description |
 | com.example.demo.DemoApplication   | (The default). Spring Boot with Webflux and full autoconfiguration |
-| com.example.mini.MiniApplication   | Spring Boot but with no autoconfiguration |
+| com.example.boot.BootApplication   | Spring Boot with Webflux and `RouterFunction` but no autoconfiguration |
+| com.example.mini.MiniApplication   | Raw Spring, no autoconfiguration, but using `@Configuration` and `RouterFunction` |
 | com.example.micro.MicroApplication | Raw Spring with no `@Configuration`       |
 
 |===
