@@ -45,13 +45,16 @@ import reactor.core.publisher.Mono;
 public class BootApplication {
 
 	public static void main(String[] args) throws Exception {
+		long t0 = System.currentTimeMillis();
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(
 				BootApplication.class).web(WebApplicationType.NONE)
 						.contextClass(AnnotationConfigApplicationContext.class)
 						.bannerMode(Mode.OFF);
 		builder.application().setListeners(Collections.emptyList());
 		try (ConfigurableApplicationContext context = builder.run(args)) {
-			ApplicationBuilder.start(context);
+			ApplicationBuilder.start(context, b -> {
+				System.err.println("Started HttpServer: " + (System.currentTimeMillis() - t0) + "ms");
+			});
 		}
 	}
 
