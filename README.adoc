@@ -6,7 +6,6 @@ This project shows how to build "micro" applications with Spring and Spring Boot
 Build the jar:
 
 ```
-$ mvn install:install-file -Dfile=${JAVA_HOME}/jre/lib/svm/builder/svm.jar -DgroupId=com.oracle.svm -DartifactId=svm -Dversion=GraalVM-1.0.0-rc1 -Dpackaging=jar
 $ ./mvnw clean install
 ```
 
@@ -45,6 +44,12 @@ The `thin.profile` could be empty (the default) for just `spring-boot-starter-we
 The apps are already systematically benchmarked here with regular JVMs: https://github.com/dsyer/spring-boot-startup-bench/blob/master/flux/README.adoc. The point of this project is just to extract them out of the JMH benchmarks, and make them easily executable as standalone apps.
 
 == Building a Native Image
+
+Switch to the "graal" branch and install the jar from Oracle.
+
+```
+$ mvn install:install-file -Dfile=${JAVA_HOME}/jre/lib/svm/builder/svm.jar -DgroupId=com.oracle.svm -DartifactId=svm -Dversion=GraalVM-1.0.0-rc1 -Dpackaging=jar
+```
 
 The `MicroApplication` ought to be convertible to a native binary image using the Graal tools (the others, maybe not so easy because they all use Spring more heavily). The netty reflection configuration we need is probably the same as the https://medium.com/graalvm/instant-netty-startup-using-graalvm-native-image-generation-ed6f14ff7692[blog], so we copied that over (hence the extra jar that needs to be installed above).
 

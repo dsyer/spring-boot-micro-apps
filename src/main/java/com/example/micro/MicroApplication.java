@@ -34,12 +34,15 @@ import reactor.core.publisher.Mono;
 public class MicroApplication {
 
 	public static void main(String[] args) throws Exception {
+		long t0 = System.currentTimeMillis();
 		GenericApplicationContext context = new GenericApplicationContext();
 		context.registerBean(RouterFunction.class, () -> RouterFunctions.route(GET("/"),
 				request -> ok().body(Mono.just("Hello"), String.class)));
 		context.registerBean("webHandler", WebHandler.class, () -> RouterFunctions
 				.toWebHandler(context.getBean(RouterFunction.class)));
 		context.refresh();
-		ApplicationBuilder.start(context);
+		ApplicationBuilder.start(context, b -> {
+			System.err.println("Started HttpServer: " + (System.currentTimeMillis() - t0) + "ms");
+		});
 	}
 }
