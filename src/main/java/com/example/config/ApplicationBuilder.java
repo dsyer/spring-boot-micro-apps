@@ -15,6 +15,7 @@
  */
 package com.example.config;
 
+import java.lang.management.ManagementFactory;
 import java.util.function.Consumer;
 
 import org.apache.commons.logging.Log;
@@ -39,12 +40,13 @@ public class ApplicationBuilder {
 	private static final String SHUTDOWN_LISTENER = "SHUTDOWN_LISTENER";
 	public static final String STARTUP = "Benchmark app started";
 	private static Log logger = LogFactory.getLog(StartupApplicationListener.class);
-	
+
 	public static void start(ConfigurableApplicationContext context) {
 		start(context, null);
 	}
 
-	public static void start(ConfigurableApplicationContext context, Consumer<BlockingNettyContext> callback) {
+	public static void start(ConfigurableApplicationContext context,
+			Consumer<BlockingNettyContext> callback) {
 		if (!hasListeners(context)) {
 			((DefaultListableBeanFactory) context.getBeanFactory())
 					.registerDisposableBean(SHUTDOWN_LISTENER,
@@ -57,7 +59,22 @@ public class ApplicationBuilder {
 		ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(handler);
 		HttpServer httpServer = HttpServer.create("localhost",
 				context.getEnvironment().getProperty("server.port", Integer.class, 8080));
-		httpServer.startAndAwait(adapter, callback);
+		httpServer.startAndAwait(adapter, callback(callback));
+	}
+
+	private static Consumer<BlockingNettyContext> callback(
+			Consumer<BlockingNettyContext> callback) {
+		return context -> {
+			try {
+				double uptime = ManagementFactory.getRuntimeMXBean().getUptime();
+				System.err.println("JVM running for " + uptime + "ms");
+			}
+			catch (Throwable e) {
+			}
+			if (callback != null) {
+				callback.accept(context);
+			}
+		};
 	}
 
 	private static boolean hasListeners(ConfigurableApplicationContext context) {

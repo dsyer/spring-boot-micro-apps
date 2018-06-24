@@ -46,12 +46,6 @@ The apps are already systematically benchmarked here with regular JVMs: https://
 
 == Building a Native Image
 
-Switch to the "graal" branch and install the jar from Oracle.
-
-```
-$ mvn install:install-file -Dfile=${JAVA_HOME}/jre/lib/svm/builder/svm.jar -DgroupId=com.oracle.svm -DartifactId=svm -Dversion=GraalVM-1.0.0-rc1 -Dpackaging=jar
-```
-
 The `MicroApplication` ought to be convertible to a native binary image using the Graal tools (the others, maybe not so easy because they all use Spring more heavily). The netty reflection configuration we need is probably the same as the https://medium.com/graalvm/instant-netty-startup-using-graalvm-native-image-generation-ed6f14ff7692[blog], so we copied that over (hence the extra jar that needs to be installed above).
 
 Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM).
@@ -62,51 +56,17 @@ Compute the classpath using the `jinj` profile so that we don't crash on a missi
 $ CP=`java -jar target/micro-0.0.1-SNAPSHOT.jar --thin.classpath --thin.profile=jlog,jinj`
 ```
 
-Then attempt to build an image (it crashes). Work in progress:
+Then build an image (it crashes). Work in progress:
 
 ```
-$ native-image -H:Name=micro -H:ReflectionConfigurationFiles=netty_reflection_config.json --report-unsupported-elements-at-runtime -cp $CP com.example.micro.MicroApplication
-Build on Server(pid: 11492, port: 26681)
-   classlist:   1,426.41 ms
-       (cap):   5,775.10 ms
-       setup:   6,010.72 ms
-    analysis:   2,698.61 ms
-fatal error: java.lang.NullPointerException
-	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
-	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
-	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
-	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
-	at java.util.concurrent.ForkJoinTask.getThrowableException(ForkJoinTask.java:598)
-	at java.util.concurrent.ForkJoinTask.get(ForkJoinTask.java:1005)
-	at com.oracle.svm.hosted.NativeImageGenerator.run(NativeImageGenerator.java:398)
-	at com.oracle.svm.hosted.NativeImageGeneratorRunner.buildImage(NativeImageGeneratorRunner.java:240)
-	at com.oracle.svm.hosted.NativeImageGeneratorRunner.build(NativeImageGeneratorRunner.java:337)
-	at com.oracle.svm.hosted.server.NativeImageBuildServer.executeCompilation(NativeImageBuildServer.java:378)
-	at com.oracle.svm.hosted.server.NativeImageBuildServer.lambda$processCommand$8(NativeImageBuildServer.java:315)
-	at com.oracle.svm.hosted.server.NativeImageBuildServer.withJVMContext(NativeImageBuildServer.java:396)
-	at com.oracle.svm.hosted.server.NativeImageBuildServer.processCommand(NativeImageBuildServer.java:312)
-	at com.oracle.svm.hosted.server.NativeImageBuildServer.processRequest(NativeImageBuildServer.java:256)
-	at com.oracle.svm.hosted.server.NativeImageBuildServer.lambda$serve$7(NativeImageBuildServer.java:216)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: java.lang.NullPointerException
-	at com.oracle.svm.hosted.ameta.AnalysisConstantReflectionProvider.readFieldValue(AnalysisConstantReflectionProvider.java:70)
-	at com.oracle.graal.pointsto.ObjectScanner.scanField(ObjectScanner.java:111)
-	at com.oracle.graal.pointsto.ObjectScanner.doScan(ObjectScanner.java:263)
-	at com.oracle.graal.pointsto.ObjectScanner.finish(ObjectScanner.java:307)
-	at com.oracle.graal.pointsto.ObjectScanner.scanBootImageHeapRoots(ObjectScanner.java:78)
-	at com.oracle.graal.pointsto.ObjectScanner.scanBootImageHeapRoots(ObjectScanner.java:60)
-	at com.oracle.graal.pointsto.BigBang.checkObjectGraph(BigBang.java:581)
-	at com.oracle.graal.pointsto.BigBang.finish(BigBang.java:552)
-	at com.oracle.svm.hosted.NativeImageGenerator.doRun(NativeImageGenerator.java:653)
-	at com.oracle.svm.hosted.NativeImageGenerator.lambda$run$0(NativeImageGenerator.java:381)
-	at java.util.concurrent.ForkJoinTask$AdaptedRunnableAction.exec(ForkJoinTask.java:1386)
-	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
-	at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1056)
-	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1692)
-	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
-Error: Processing image build request failed
+$ native-image -Dio.netty.noUnsafe=true -H:Name=micro -H:ReflectionConfigurationFiles=graal.json --report-unsupported-elements-at-runtime -cp $CP com.example.micro.MicroApplication
 ```
 
-See https://github.com/oracle/graal/issues/431.
+The run it:
+
+```
+$ ./micro 
+Started HttpServer: 2ms
+```
+
+Excellent!

@@ -69,7 +69,7 @@ public class BeanCountingApplicationListener
 			logger.info("Class count: " + id + "=" + ManagementFactory
 					.getClassLoadingMXBean().getTotalLoadedClassCount());
 		}
-		catch (Exception e) {
+		catch (Throwable e) {
 		}
 	}
 
