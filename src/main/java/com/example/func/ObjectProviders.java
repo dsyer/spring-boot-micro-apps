@@ -22,7 +22,6 @@ import java.util.Map;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.DependencyDescriptor;
-import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
 
@@ -119,7 +118,7 @@ public class ObjectProviders {
 			ObjectProvider<T> provider = (ObjectProvider<T>) context
 					.getAutowireCapableBeanFactory()
 					.resolveDependency(new DependencyDescriptor(methodParameter, false),
-							ErrorWebExceptionHandler.class.getName());
+							target.getName());
 			return provider;
 		}
 
