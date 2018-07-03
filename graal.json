@@ -1,14 +1,27 @@
 [
   {
-    "name": "io.netty.channel.socket.nio.NioServerSocketChannel",
+    "name": "org.springframework.http.codec.support.DefaultServerCodecConfigurer",
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },{
+    "name": "org.springframework.context.annotation.ConfigurationClassPostProcessor",
     "methods": [
       { "name": "<init>", "parameterTypes": [] }
     ]
   },
   {
-    "name": "org.springframework.http.codec.support.DefaultServerCodecConfigurer",
-    "methods": [
-      { "name": "<init>", "parameterTypes": [] }
-    ]
+    "name": "org.eclipse.jetty.servlet.ServletMapping",
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "[Lorg.eclipse.jetty.servlet.ServletMapping;",
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
   }
 ]

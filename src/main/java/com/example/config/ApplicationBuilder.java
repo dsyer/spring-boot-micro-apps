@@ -16,21 +16,18 @@
 package com.example.config;
 
 import java.lang.management.ManagementFactory;
-import java.time.Duration;
 import java.util.function.Consumer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.web.embedded.jetty.JettyReactiveWebServerFactory;
+import org.springframework.boot.web.server.WebServer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.http.server.reactive.HttpHandler;
-import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
-
-import reactor.netty.DisposableServer;
-import reactor.netty.http.server.HttpServer;
 
 /**
  * @author Dave Syer
@@ -47,7 +44,7 @@ public class ApplicationBuilder {
 	}
 
 	public static void start(ConfigurableApplicationContext context,
-			Consumer<DisposableServer> callback) {
+			Consumer<WebServer> callback) {
 		if (!hasListeners(context)) {
 			((DefaultListableBeanFactory) context.getBeanFactory())
 					.registerDisposableBean(SHUTDOWN_LISTENER,
@@ -57,15 +54,14 @@ public class ApplicationBuilder {
 		}
 
 		HttpHandler handler = WebHttpHandlerBuilder.applicationContext(context).build();
-		ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(handler);
-		HttpServer httpServer = HttpServer.create().host("localhost").port(
+		WebServer server = new JettyReactiveWebServerFactory(
 				context.getEnvironment().getProperty("server.port", Integer.class, 8080))
-				.handle(adapter);
-		httpServer.bindUntilJavaShutdown(Duration.ofSeconds(60), callback(callback));
+						.getWebServer(handler);
+		server.start();
+		callback(callback).accept(server);
 	}
 
-	private static Consumer<DisposableServer> callback(
-			Consumer<DisposableServer> callback) {
+	private static Consumer<WebServer> callback(Consumer<WebServer> callback) {
 		return context -> {
 			try {
 				double uptime = ManagementFactory.getRuntimeMXBean().getUptime();
