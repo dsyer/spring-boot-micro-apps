@@ -1,4 +1,5 @@
 micro
+func
 
 target/
 !.mvn/wrapper/maven-wrapper.jar

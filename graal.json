@@ -5,7 +5,12 @@
       { "name": "<init>", "parameterTypes": [] }
     ]
   },{
-    "name": "org.springframework.context.annotation.ConfigurationClassPostProcessor",
+    "name": "org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor",
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },{
+    "name": "org.springframework.boot.web.server.WebServerFactoryCustomizerBeanPostProcessor",
     "methods": [
       { "name": "<init>", "parameterTypes": [] }
     ]
