@@ -50,7 +50,7 @@ The `MicroApplication` ought to be convertible to a native binary image using th
 
 Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM).
 
-Compute the classpath using the `jinj` profile so that we don't crash on a missing JSR330 class:
+Compute the classpath using the `graal` profile so that we don't crash on missing JSR330 and jzlib classes:
 
 ```
 $ CP=`java -jar target/micro-0.0.1-SNAPSHOT.jar --thin.classpath --thin.profile=graal`
@@ -62,7 +62,7 @@ Then build an image:
 $ native-image -Dio.netty.noUnsafe=true -H:Name=micro -H:ReflectionConfigurationFiles=graal.json --report-unsupported-elements-at-runtime -cp $CP com.example.micro.MicroApplication
 ```
 
-The run it:
+Then run it:
 
 ```
 $ ./micro 
