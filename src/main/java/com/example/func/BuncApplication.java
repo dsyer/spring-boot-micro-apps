@@ -16,6 +16,8 @@
 
 package com.example.func;
 
+import java.util.Collections;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext;
 import org.springframework.context.ApplicationContext;
@@ -46,6 +48,7 @@ public class BuncApplication extends FuncApplication {
 				// super.load(context, sources);
 			}
 		};
+		application.setDefaultProperties(Collections.singletonMap("boot.active", "true"));
 		application.addInitializers(this);
 		application.setApplicationContextClass(ReactiveWebServerApplicationContext.class);
 		application.run();
