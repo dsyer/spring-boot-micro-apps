@@ -2,7 +2,10 @@ package com.example.func;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.example.config.BeanCountingApplicationListener;
 import com.google.gson.Gson;
@@ -10,13 +13,13 @@ import com.google.gson.GsonBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
+import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
 import org.springframework.boot.autoconfigure.gson.GsonBuilderCustomizer;
 import org.springframework.boot.autoconfigure.gson.GsonProperties;
 import org.springframework.boot.autoconfigure.http.HttpEncodingProperties;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
-import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.reactor.core.ReactorCoreProperties;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -41,6 +44,7 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
@@ -52,7 +56,6 @@ import org.springframework.validation.Validator;
 import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.accept.RequestedContentTypeResolver;
-import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.support.HandlerFunctionAdapter;
@@ -117,6 +120,8 @@ public class FuncApplication implements Runnable, Closeable,
 	@Override
 	public void initialize(GenericApplicationContext context) {
 		this.context = context;
+		((AbstractAutowireCapableBeanFactory) context.getDefaultListableBeanFactory())
+				.setParameterNameDiscoverer(new NoopParameterNameDiscoverer());
 		performPreinitialization();
 		context.registerBean(AutowiredAnnotationBeanPostProcessor.class);
 		registerDemoApplication();
@@ -200,19 +205,11 @@ public class FuncApplication implements Runnable, Closeable,
 	private void registerErrorWebFluxAutoConfiguration() {
 		context.registerBean(ErrorAttributes.class, () -> new DefaultErrorAttributes(
 				context.getBean(ServerProperties.class).getError().isIncludeException()));
+		context.registerBean(ErrorWebFluxAutoConfiguration.class);
 		context.registerBean(ErrorWebExceptionHandler.class, () -> {
-			return errorWebFluxAutoConfiguration()
+			return context.getBean(ErrorWebFluxAutoConfiguration.class)
 					.errorWebExceptionHandler(context.getBean(ErrorAttributes.class));
 		});
-	}
-
-	private ErrorWebFluxAutoConfiguration errorWebFluxAutoConfiguration() {
-		ServerProperties serverProperties = context.getBean(ServerProperties.class);
-		ResourceProperties resourceProperties = context.getBean(ResourceProperties.class);
-		ServerCodecConfigurer serverCodecs = context.getBean(ServerCodecConfigurer.class);
-		return new ErrorWebFluxAutoConfiguration(serverProperties, resourceProperties,
-				ObjectProviders.provider(context, ErrorWebFluxAutoConfiguration.class),
-				serverCodecs, context);
 	}
 
 	private void registerWebFluxAutoConfiguration() {
@@ -273,13 +270,7 @@ public class FuncApplication implements Runnable, Closeable,
 		context.registerBean(WebHttpHandlerBuilder.WEB_HANDLER_BEAN_NAME,
 				DispatcherHandler.class, () -> context
 						.getBean(EnableWebFluxConfigurationWrapper.class).webHandler());
-		context.registerBean(WebFluxConfigurer.class,
-				() -> new WebFluxConfig(context.getBean(ResourceProperties.class),
-						context.getBean(WebFluxProperties.class), context,
-						ObjectProviders.provider(context, WebFluxConfig.class, 3),
-						ObjectProviders.provider(context, WebFluxConfig.class, 4),
-						ObjectProviders.provider(context, WebFluxConfig.class, 5),
-						ObjectProviders.provider(context, WebFluxConfig.class, 6)));
+		context.registerBean(WebFluxConfig.class);
 	}
 
 	private void registerHttpHandlerAutoConfiguration() {
@@ -302,12 +293,9 @@ public class FuncApplication implements Runnable, Closeable,
 	}
 
 	private void registerHttpMessageConvertersAutoConfiguration() {
-		context.registerBean(HttpMessageConverters.class, () -> {
-			HttpMessageConvertersAutoConfiguration config = new HttpMessageConvertersAutoConfiguration(
-					ObjectProviders.provider(context,
-							HttpMessageConvertersAutoConfiguration.class));
-			return config.messageConverters();
-		});
+		// TODO: re-instate default message converters
+		context.registerBean(HttpMessageConverters.class,
+				() -> new HttpMessageConverters(false, Collections.emptyList()));
 		context.registerBean(StringHttpMessageConverter.class,
 				this::stringHttpMessageConverter);
 		context.registerBean(GsonHttpMessageConverter.class,
@@ -327,20 +315,15 @@ public class FuncApplication implements Runnable, Closeable,
 	}
 
 	private void registerRestTemplateAutoConfiguration() {
-		RestTemplateAutoConfiguration config = new RestTemplateAutoConfiguration(
-				ObjectProviders.provider(context, RestTemplateAutoConfiguration.class, 0),
-				ObjectProviders.provider(context, RestTemplateAutoConfiguration.class,
-						1));
-		context.registerBean(RestTemplateBuilder.class,
-				() -> config.restTemplateBuilder());
+		context.registerBean(RestTemplateAutoConfiguration.class);
+		context.registerBean(RestTemplateBuilder.class, () -> context
+				.getBean(RestTemplateAutoConfiguration.class).restTemplateBuilder());
 	}
 
 	private void registerWebClientAutoConfiguration() {
-		context.registerBean(WebClient.Builder.class, () -> {
-			WebClientAutoConfiguration config = new WebClientAutoConfiguration(
-					ObjectProviders.provider(context, WebClientAutoConfiguration.class));
-			return config.webClientBuilder();
-		});
+		context.registerBean(WebClientAutoConfiguration.class);
+		context.registerBean(WebClient.Builder.class, () -> context
+				.getBean(WebClientAutoConfiguration.class).webClientBuilder());
 	}
 
 }
@@ -360,6 +343,20 @@ class EnableWebFluxConfigurationWrapper extends EnableWebFluxConfiguration {
 
 	public EnableWebFluxConfigurationWrapper(WebFluxProperties properties) {
 		super(properties);
+	}
+
+}
+
+class NoopParameterNameDiscoverer implements ParameterNameDiscoverer {
+
+	@Override
+	public String[] getParameterNames(Method method) {
+		return null;
+	}
+
+	@Override
+	public String[] getParameterNames(Constructor<?> ctor) {
+		return null;
 	}
 
 }

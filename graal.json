@@ -5,6 +5,11 @@
       { "name": "<init>", "parameterTypes": [] }
     ]
   },{
+    "name": "org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext",
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },{
     "name": "org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor",
     "methods": [
       { "name": "<init>", "parameterTypes": [] }
@@ -56,6 +61,10 @@
       "org.springframework.beans.factory.ObjectProvider"
       ] }
     ]
+  },
+  {
+    "name": "org.eclipse.jetty.server.ServerConnector",
+    "allPublicMethods": true
   },
   {
     "name": "org.eclipse.jetty.servlet.ServletMapping",
