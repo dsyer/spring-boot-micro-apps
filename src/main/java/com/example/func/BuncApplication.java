@@ -16,6 +16,9 @@
 
 package com.example.func;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext;
 import org.springframework.context.ApplicationContext;
@@ -46,6 +49,10 @@ public class BuncApplication extends FuncApplication {
 				// super.load(context, sources);
 			}
 		};
+		Map<String, Object> map = new HashMap<>();
+		map.put("boot.active", "true");
+		application.setDefaultProperties(map);
+		application.setRegisterShutdownHook(false);
 		application.addInitializers(this);
 		application.setApplicationContextClass(ReactiveWebServerApplicationContext.class);
 		application.run();

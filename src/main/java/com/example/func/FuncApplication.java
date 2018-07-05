@@ -111,6 +111,7 @@ public class FuncApplication implements Runnable, Closeable,
 	@Override
 	public void run() {
 		ReactiveWebServerApplicationContext context = new ReactiveWebServerApplicationContext();
+		// context.registerShutdownHook();
 		initialize(context);
 		context.refresh();
 		System.err.println(MARKER);
@@ -122,7 +123,9 @@ public class FuncApplication implements Runnable, Closeable,
 		this.context = context;
 		((AbstractAutowireCapableBeanFactory) context.getDefaultListableBeanFactory())
 				.setParameterNameDiscoverer(new NoopParameterNameDiscoverer());
-		performPreinitialization();
+		if (context.getEnvironment().getProperty("boot.active", Boolean.class, false)) {
+			performPreinitialization();
+		}
 		context.registerBean(AutowiredAnnotationBeanPostProcessor.class);
 		registerDemoApplication();
 		registerWebServerFactoryCustomizerBeanPostProcessor();
