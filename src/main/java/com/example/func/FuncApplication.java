@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Set;
 
 import com.example.config.BeanCountingApplicationListener;
 import com.google.gson.Gson;
@@ -46,6 +47,10 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.ReactiveAdapterRegistry;
+import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.convert.converter.GenericConverter;
+import org.springframework.core.serializer.support.SerializingConverter;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.codec.ServerCodecConfigurer;
@@ -67,7 +72,10 @@ import org.springframework.web.reactive.result.method.annotation.RequestMappingH
 import org.springframework.web.reactive.result.method.annotation.ResponseBodyResultHandler;
 import org.springframework.web.reactive.result.method.annotation.ResponseEntityResultHandler;
 import org.springframework.web.reactive.result.view.ViewResolutionResultHandler;
+import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 import org.springframework.web.server.i18n.LocaleContextResolver;
 
@@ -126,6 +134,7 @@ public class FuncApplication implements Runnable, Closeable,
 			performPreinitialization();
 		}
 		context.registerBean(AutowiredAnnotationBeanPostProcessor.class);
+		registerConverters();
 		registerDemoApplication();
 		registerWebServerFactoryCustomizerBeanPostProcessor();
 		registerConfigurationProperties();
@@ -140,6 +149,35 @@ public class FuncApplication implements Runnable, Closeable,
 		registerReactorCoreAutoConfiguration();
 		registerRestTemplateAutoConfiguration();
 		registerWebClientAutoConfiguration();
+	}
+
+	private void registerConverters() {
+		// Graal needs this?
+		context.registerBean(Converter.class, () -> new SerializingConverter());
+		context.registerBean(GenericConverter.class, () -> new DummyGenericConverter());
+		context.registerBean(WebFilter.class, () -> new DummyWebFilter());
+	}
+
+	static class DummyWebFilter implements WebFilter {
+		@Override
+		public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+			return chain.filter(exchange);
+		}
+	}
+
+	static class DummyGenericConverter implements GenericConverter {
+
+		@Override
+		public Set<ConvertiblePair> getConvertibleTypes() {
+			return Collections.emptySet();
+		}
+
+		@Override
+		public Object convert(Object source, TypeDescriptor sourceType,
+				TypeDescriptor targetType) {
+			return null;
+		}
+
 	}
 
 	private void performPreinitialization() {

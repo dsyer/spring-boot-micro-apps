@@ -1,71 +1,175 @@
 [
-  {
-    "name": "io.netty.channel.socket.nio.NioServerSocketChannel",
-    "methods": [
-      { "name": "<init>", "parameterTypes": [] }
-    ]
-  },
-  {
-    "name": "org.springframework.http.codec.support.DefaultServerCodecConfigurer",
-    "methods": [
-      { "name": "<init>", "parameterTypes": [] }
-    ]
-  },{
-    "name": "org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext",
-    "methods": [
-      { "name": "<init>", "parameterTypes": [] }
-    ]
-  },{
-    "name": "org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor",
-    "methods": [
-      { "name": "<init>", "parameterTypes": [] }
-    ]
-  },{
-    "name": "org.springframework.boot.web.server.WebServerFactoryCustomizerBeanPostProcessor",
-    "methods": [
-      { "name": "<init>", "parameterTypes": [] }
-    ]
-  },{
-    "name": "org.springframework.boot.context.properties.ConversionServiceDeducer$Factory",
-    "methods": [
-      { "name": "<init>", "parameterTypes": [] }
-    ]
-  },
-  {
-    "name": "org.springframework.boot.autoconfigure.web.reactive.error.ErrorWebFluxAutoConfiguration",
-    "methods": [
-      { "name": "<init>", "parameterTypes": ["org.springframework.boot.autoconfigure.web.ServerProperties",
-                                             "org.springframework.boot.autoconfigure.web.ResourceProperties",
-                                             "org.springframework.beans.factory.ObjectProvider",
-                                             "org.springframework.http.codec.ServerCodecConfigurer",
-                                             "org.springframework.context.ApplicationContext"] }
-    ]
-  },{
-    "name": "org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration",
-    "methods": [
-      { "name": "<init>", "parameterTypes": ["org.springframework.beans.factory.ObjectProvider"] }
-    ]
-  },{
-    "name": "org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration",
-    "methods": [
-      { "name": "<init>", "parameterTypes": ["org.springframework.beans.factory.ObjectProvider","org.springframework.beans.factory.ObjectProvider"] }
-    ]
-  },{
-    "name": "org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration",
-    "methods": [
-      { "name": "<init>", "parameterTypes": ["org.springframework.beans.factory.ObjectProvider"] }
-    ]
-  },{
-    "name": "org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration$WebFluxConfig",
-    "methods": [
-      { "name": "<init>", "parameterTypes": ["org.springframework.boot.autoconfigure.web.ResourceProperties",
-      "org.springframework.boot.autoconfigure.web.reactive.WebFluxProperties",
-      "org.springframework.beans.factory.ListableBeanFactory",
-      "org.springframework.beans.factory.ObjectProvider",
-      "org.springframework.beans.factory.ObjectProvider",
-      "org.springframework.beans.factory.ObjectProvider",
-      "org.springframework.beans.factory.ObjectProvider"
-      ] }
-    ]
-  }
+	{
+		"name": "io.netty.channel.socket.nio.NioServerSocketChannel",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "org.springframework.http.codec.support.DefaultServerCodecConfigurer",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "org.springframework.boot.web.server.WebServerFactoryCustomizerBeanPostProcessor",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "org.springframework.boot.context.properties.ConversionServiceDeducer$Factory",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "org.springframework.boot.autoconfigure.web.reactive.error.ErrorWebFluxAutoConfiguration",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": [
+					"org.springframework.boot.autoconfigure.web.ServerProperties",
+					"org.springframework.boot.autoconfigure.web.ResourceProperties",
+					"org.springframework.beans.factory.ObjectProvider",
+					"org.springframework.http.codec.ServerCodecConfigurer",
+					"org.springframework.context.ApplicationContext"
+				]
+			}
+		]
+	},
+	{
+		"name": "org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": [
+					"org.springframework.beans.factory.ObjectProvider"
+				]
+			}
+		]
+	},
+	{
+		"name": "org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": [
+					"org.springframework.beans.factory.ObjectProvider",
+					"org.springframework.beans.factory.ObjectProvider"
+				]
+			}
+		]
+	},
+	{
+		"name": "org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": [
+					"org.springframework.beans.factory.ObjectProvider"
+				]
+			}
+		]
+	},
+	{
+		"name": "org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration$WebFluxConfig",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": [
+					"org.springframework.boot.autoconfigure.web.ResourceProperties",
+					"org.springframework.boot.autoconfigure.web.reactive.WebFluxProperties",
+					"org.springframework.beans.factory.ListableBeanFactory",
+					"org.springframework.beans.factory.ObjectProvider",
+					"org.springframework.beans.factory.ObjectProvider",
+					"org.springframework.beans.factory.ObjectProvider",
+					"org.springframework.beans.factory.ObjectProvider"
+				]
+			}
+		]
+	},
+	{
+		"name": "org.springframework.boot.context.properties.ConversionServiceDeducer$Factory",
+		"allPublicMethods": true
+	},
+	{
+		"name": "reactor.core.publisher.Mono",
+		"allPublicFields": true,
+		"allPublicMethods": true,
+		"allDeclaredMethods": true,
+		"allDeclaredFields": true
+	},
+	{
+		"name": "com.example.func.EnableWebFluxConfigurationWrapper",
+		"allPublicFields": true,
+		"allPublicMethods": true,
+		"allDeclaredMethods": true,
+		"allDeclaredFields": true
+	},
+	{
+		"name": "org.springframework.context.ApplicationContextAware",
+		"allPublicFields": true,
+		"allPublicMethods": true,
+		"allDeclaredMethods": true,
+		"allDeclaredFields": true
+	},
+	{
+		"name": "org.springframework.beans.factory.Aware",
+		"allPublicFields": true,
+		"allPublicMethods": true,
+		"allDeclaredMethods": true,
+		"allDeclaredFields": true
+	},
+	{
+		"name": "org.springframework.web.reactive.function.server.support.RouterFunctionMapping$SortedRouterFunctionsContainer",
+		"allPublicFields": true,
+		"allPublicMethods": true,
+		"allDeclaredMethods": true,
+		"allDeclaredFields": true
+	},
+	{
+		"name": "org.springframework.web.server.adapter.WebHttpHandlerBuilder$SortedBeanContainer",
+		"allPublicFields": true,
+		"allPublicMethods": true,
+		"allDeclaredMethods": true,
+		"allDeclaredFields": true
+	},
+	{
+		"name": "com.example.func.ReactorConfiguration",
+		"allPublicFields": true,
+		"allPublicMethods": true,
+		"allDeclaredMethods": true,
+		"allDeclaredFields": true
+	}
 ]
