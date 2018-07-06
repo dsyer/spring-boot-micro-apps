@@ -131,6 +131,12 @@
 	{
 		"name": "org.springframework.boot.context.properties.ConversionServiceDeducer$Factory",
 		"allPublicMethods": true
+	},{
+		"name": "reactor.core.publisher.Mono",
+		"allPublicFields": true,
+		"allPublicMethods": true,
+		"allDeclaredMethods": true,
+		"allDeclaredFields": true
 	},
 	{
 		"name": "com.example.func.EnableWebFluxConfigurationWrapper",
