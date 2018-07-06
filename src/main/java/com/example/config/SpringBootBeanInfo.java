@@ -41,15 +41,15 @@ class SpringBootBeanInfo implements BeanInfo {
 					.isAssignableFrom(setter.getParameterTypes()[0])) {
 				setter = null;
 			}
-			descriptors.add(new PropertyDescriptor(name, getter, setter));
+			descriptors.add(new SlimPropertyDescriptor(name, getter, setter));
 		}
 		for (Map.Entry<String, Method> entry : setters.entrySet()) {
 			Method setter = entry.getValue();
 			String name = entry.getKey();
-			System.err.println("**************** " + setter);
-			descriptors.add(new PropertyDescriptor(name, null, setter));
+			// System.err.println("**************** " + setter);
+			descriptors.add(new SlimPropertyDescriptor(name, null, setter));
 		}
-		return descriptors.toArray(new PropertyDescriptor[descriptors.size()]);
+		return descriptors.toArray(new SlimPropertyDescriptor[descriptors.size()]);
 	}
 
 	private void collectGetterSetterMethod(Method method, Map<String, Method> getters,
@@ -66,8 +66,7 @@ class SpringBootBeanInfo implements BeanInfo {
 					&& method.getReturnType() == boolean.class) {
 				getters.putIfAbsent(name.substring(2), method);
 			}
-			else if (argSize == 1 && name.length() > 3 && name.startsWith("set")
-					&& method.getReturnType() == void.class) {
+			else if (argSize == 1 && name.length() > 3 && name.startsWith("set")) {
 				setters.putIfAbsent(name.substring(3), method);
 			}
 		}
@@ -113,4 +112,37 @@ class SpringBootBeanInfo implements BeanInfo {
 		return this.propertyDescriptors;
 	}
 
+}
+
+class SlimPropertyDescriptor extends PropertyDescriptor {
+
+	private Method readMethod;
+	private Method writeMethod;
+
+	public SlimPropertyDescriptor(String name, Method getter, Method setter)
+			throws IntrospectionException {
+		super(name, getter, setter);
+	}
+
+	@Override
+	public synchronized void setReadMethod(Method readMethod)
+			throws IntrospectionException {
+		this.readMethod = readMethod;
+	}
+
+	@Override
+	public synchronized void setWriteMethod(Method writeMethod)
+			throws IntrospectionException {
+		this.writeMethod = writeMethod;
+	}
+
+	@Override
+	public Method getReadMethod() {
+		return readMethod;
+	}
+
+	@Override
+	public Method getWriteMethod() {
+		return writeMethod;
+	}
 }
