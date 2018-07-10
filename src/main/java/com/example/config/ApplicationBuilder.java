@@ -57,7 +57,7 @@ public class ApplicationBuilder {
 
 		HttpHandler handler = WebHttpHandlerBuilder.applicationContext(context).build();
 		ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(handler);
-		HttpServer httpServer = HttpServer.create("localhost",
+		HttpServer httpServer = HttpServer.create(
 				context.getEnvironment().getProperty("server.port", Integer.class, 8080));
 		httpServer.startAndAwait(adapter, callback(callback));
 	}
