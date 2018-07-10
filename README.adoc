@@ -70,3 +70,29 @@ Started HttpServer: 2ms
 ```
 
 Excellent!
+
+=== Docker support
+
+In case you are using https://www.docker.com/[Docker], you can use the provided link:Dockerfile[]
+for building the native image, so you would not have to setup https://github.com/oracle/graal/releases[GraalVM]
+on your machine.
+
+
+```
+$ docker build -t io.spring.example/functional-spring-native-image .
+```
+
+Afterwards, you can run the created Docker-image `io.spring.example/functional-spring-native-image`
+
+```
+$ docker run -p8080:8080 io.spring.example/functional-spring-native-image
+Started HttpServer: 3ms
+
+$ docker ps
+CONTAINER ID  IMAGE                                              COMMAND    PORTS
+61f0ee217d6e  io.spring.example/functional-spring-native-image   "/micro"   0.0.0.0:8080->8080/tcp
+
+$ docker stats 61f0ee217d6e
+CONTAINER ID  CPU %   MEM USAGE
+61f0ee217d6e  0.04%   42.91MiB
+```
