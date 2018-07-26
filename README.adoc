@@ -65,7 +65,7 @@ $ native-image -Dio.netty.noUnsafe=true -H:Name=target/micro -H:ReflectionConfig
 Then run it:
 
 ```
-$ ./micro 
+$ ./target/micro 
 Started HttpServer: 2ms
 ```
 
