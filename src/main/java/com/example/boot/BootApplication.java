@@ -19,7 +19,6 @@ import java.util.Collections;
 
 import com.example.config.ApplicationBuilder;
 
-import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -49,11 +48,12 @@ public class BootApplication {
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(
 				BootApplication.class).web(WebApplicationType.NONE)
 						.contextClass(AnnotationConfigApplicationContext.class)
-						.bannerMode(Mode.OFF);
+						.registerShutdownHook(false);
 		builder.application().setListeners(Collections.emptyList());
 		try (ConfigurableApplicationContext context = builder.run(args)) {
 			ApplicationBuilder.start(context, b -> {
-				System.err.println("Started HttpServer: " + (System.currentTimeMillis() - t0) + "ms");
+				System.err.println("Started HttpServer: "
+						+ (System.currentTimeMillis() - t0) + "ms");
 			});
 		}
 	}
