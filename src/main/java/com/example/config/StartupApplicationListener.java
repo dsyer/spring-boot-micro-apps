@@ -51,6 +51,7 @@ public class StartupApplicationListener
 
 	@Override
 	public void onApplicationEvent(ApplicationReadyEvent event) {
+		System.err.println("Event: " + event);
 		if (!event.getApplicationContext().equals(this.context)) {
 			return;
 		}

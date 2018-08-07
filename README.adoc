@@ -48,7 +48,7 @@ The apps are already systematically benchmarked here with regular JVMs: https://
 
 The `MicroApplication` ought to be convertible to a native binary image using the Graal tools (the others, maybe not so easy because they all use Spring more heavily). The netty reflection configuration we need is probably the same as the https://medium.com/graalvm/instant-netty-startup-using-graalvm-native-image-generation-ed6f14ff7692[blog], so we copied that over (hence the extra jar that needs to be installed above).
 
-Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it.
+Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it. You will need GraalVM 1.0.0-rc5 or later.
 
 Compute the classpath using the `graal` profile so that we don't crash on missing JSR330 and jzlib classes:
 
@@ -70,3 +70,30 @@ Started HttpServer: 2ms
 ```
 
 Excellent!
+
+You can do the same with `BuncApplication` (full Spring Boot, but manually configured):
+
+```
+$ native-image -Dio.netty.noUnsafe=true -H:Name=target/bunc -H:ReflectionConfigurationFiles=func.json --report-unsupported-elements-at-runtime -cp $CP com.example.func.BuncApplication
+$ ./target/bunc
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                        
+
+Aug 07, 2018 11:25:13 AM org.springframework.boot.StartupInfoLogger logStarting
+INFO: Starting application on tower with PID 11253 (started by dsyer in /home/dsyer/dev/demo/workspace/micro)
+Aug 07, 2018 11:25:13 AM org.springframework.boot.SpringApplication logStartupProfileInfo
+INFO: No active profile set, falling back to default profiles: default
+Aug 07, 2018 11:25:13 AM org.springframework.boot.web.embedded.netty.NettyWebServer start
+INFO: Netty started on port(s): 8080
+Aug 07, 2018 11:25:13 AM org.springframework.boot.StartupInfoLogger logStarted
+INFO: Started application in 0.036 seconds (JVM running for 0.04)
+Benchmark app started
+Started HttpServer: 40ms
+```
+
