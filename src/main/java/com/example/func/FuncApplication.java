@@ -30,6 +30,7 @@ import org.springframework.boot.autoconfigure.web.reactive.ReactiveWebServerFact
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration.EnableWebFluxConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration.WebFluxConfig;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxProperties;
+import org.springframework.boot.autoconfigure.web.reactive.WebFluxRegistrations;
 import org.springframework.boot.autoconfigure.web.reactive.error.ErrorWebFluxAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationBeanFactoryMetadata;
@@ -254,8 +255,7 @@ public class FuncApplication implements Runnable, Closeable,
 
 	private void registerWebFluxAutoConfiguration() {
 		context.registerBean(EnableWebFluxConfigurationWrapper.class,
-				() -> new EnableWebFluxConfigurationWrapper(
-						context.getBean(WebFluxProperties.class)));
+				() -> new EnableWebFluxConfigurationWrapper(context));
 		context.registerBean(HandlerFunctionAdapter.class,
 				() -> context.getBean(EnableWebFluxConfigurationWrapper.class)
 						.handlerFunctionAdapter());
@@ -381,8 +381,9 @@ class ReactorConfiguration {
 
 class EnableWebFluxConfigurationWrapper extends EnableWebFluxConfiguration {
 
-	public EnableWebFluxConfigurationWrapper(WebFluxProperties properties) {
-		super(properties);
+	public EnableWebFluxConfigurationWrapper(GenericApplicationContext context) {
+		super(context.getBean(WebFluxProperties.class),
+				context.getBeanProvider(WebFluxRegistrations.class));
 	}
 
 }
