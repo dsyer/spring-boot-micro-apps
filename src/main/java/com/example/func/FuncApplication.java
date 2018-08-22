@@ -120,7 +120,9 @@ public class FuncApplication implements Runnable, Closeable,
 	@Override
 	public void run() {
 		ReactiveWebServerApplicationContext context = new ReactiveWebServerApplicationContext();
+		System.err.println("Initializing...");
 		initialize(context);
+		System.err.println("Refreshing...");
 		context.refresh();
 		System.err.println(MARKER);
 		new BeanCountingApplicationListener().log(context);

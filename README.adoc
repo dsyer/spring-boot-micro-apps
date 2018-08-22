@@ -74,7 +74,7 @@ Excellent!
 You can do the same with `BuncApplication` (full Spring Boot, but manually configured):
 
 ```
-$ native-image -Dio.netty.noUnsafe=true -H:Name=target/bunc -H:ReflectionConfigurationFiles=func.json --report-unsupported-elements-at-runtime -cp $CP com.example.func.BuncApplication
+$ native-image -Dio.netty.noUnsafe=true -H:Name=target/bunc -H:ReflectionConfigurationFiles=func.json -H:IncludeResources='META-INF/spring.factories|org/springframework/boot/logging/.*' --report-unsupported-elements-at-runtime -cp $CP com.example.func.BuncApplication -Dorg.springframework.boot.logging.LoggingSystem=org.springframework.boot.logging.java.JavaLoggingSystem
 $ ./target/bunc
 
   .   ____          _            __ _ _

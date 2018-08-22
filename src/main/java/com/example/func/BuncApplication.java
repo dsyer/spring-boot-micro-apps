@@ -47,12 +47,20 @@ public class BuncApplication extends FuncApplication {
 				// We don't want the annotation bean definition reader
 				// super.load(context, sources);
 			}
+			@Override
+			protected void refresh(ApplicationContext applicationContext) {
+				System.err.println("Refreshing...");
+				super.refresh(applicationContext);
+				System.err.println("Done...");
+			}
 		};
 		application.setRegisterShutdownHook(false);
 		application.setDefaultProperties(Collections.singletonMap("boot.active", "true"));
 		application.addInitializers(this);
+		application.setLogStartupInfo(false);
 		application.setApplicationContextClass(ReactiveWebServerApplicationContext.class);
-		application.run();
+		System.err.println("Running...");
+		System.err.println(application.run());
 		System.err.println(MARKER);
 	}
 

@@ -15,7 +15,6 @@
  */
 package com.example.config;
 
-import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -23,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.BeansException;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
@@ -31,7 +29,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.ReflectionUtils;
 
 /**
  * @author Dave Syer
@@ -75,17 +72,8 @@ public class StartupApplicationListener
 	}
 
 	private Set<Class<?>> sources(ApplicationReadyEvent event) {
-		Method method = ReflectionUtils.findMethod(SpringApplication.class,
-				"getAllSources");
-		if (method == null) {
-			method = ReflectionUtils.findMethod(SpringApplication.class, "getSources");
-		}
-		ReflectionUtils.makeAccessible(method);
-		@SuppressWarnings("unchecked")
-		Set<Object> objects = (Set<Object>) ReflectionUtils.invokeMethod(method,
-				event.getSpringApplication());
 		Set<Class<?>> result = new LinkedHashSet<>();
-		for (Object object : objects) {
+		for (Object object : event.getSpringApplication().getAllSources()) {
 			if (object instanceof String) {
 				object = ClassUtils.resolveClassName((String) object, null);
 			}
