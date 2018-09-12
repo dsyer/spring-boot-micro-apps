@@ -20,8 +20,8 @@ import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoCon
 import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
 import org.springframework.boot.autoconfigure.gson.GsonBuilderCustomizer;
 import org.springframework.boot.autoconfigure.gson.GsonProperties;
-import org.springframework.boot.autoconfigure.http.HttpEncodingProperties;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.boot.autoconfigure.http.HttpProperties;
 import org.springframework.boot.autoconfigure.reactor.core.ReactorCoreProperties;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -225,8 +225,7 @@ public class FuncApplication implements Runnable, Closeable,
 		context.registerBean(ResourceProperties.class, () -> new ResourceProperties());
 		context.registerBean(WebFluxProperties.class, () -> new WebFluxProperties());
 		context.registerBean(GsonProperties.class, () -> new GsonProperties());
-		context.registerBean(HttpEncodingProperties.class,
-				() -> new HttpEncodingProperties());
+		context.registerBean(HttpProperties.class, () -> new HttpProperties());
 		context.registerBean(ReactorCoreProperties.class,
 				() -> new ReactorCoreProperties());
 	}
@@ -372,7 +371,7 @@ public class FuncApplication implements Runnable, Closeable,
 
 	StringHttpMessageConverter stringHttpMessageConverter() {
 		StringHttpMessageConverter converter = new StringHttpMessageConverter(
-				context.getBean(HttpEncodingProperties.class).getCharset());
+				context.getBean(HttpProperties.class).getEncoding().getCharset());
 		converter.setWriteAcceptCharset(false);
 		return converter;
 	}
