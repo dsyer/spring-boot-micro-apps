@@ -28,6 +28,7 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.ReactiveWebServerFactoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.ReactiveWebServerFactoryCustomizer;
+import org.springframework.boot.autoconfigure.web.reactive.ResourceHandlerRegistrationCustomizer;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration.EnableWebFluxConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration.WebFluxConfig;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxProperties;
@@ -329,15 +330,10 @@ public class FuncApplication implements Runnable, Closeable,
 		context.registerBean(WebFluxConfigurer.class,
 				() -> new WebFluxConfig(context.getBean(ResourceProperties.class),
 						context.getBean(WebFluxProperties.class), context,
-						context.getBeanProvider(ResolvableType.forClassWithGenerics(
-								List.class, HandlerMethodArgumentResolver.class)),
-						context.getBeanProvider(ResolvableType
-								.forClassWithGenerics(List.class, CodecCustomizer.class)),
-						// TODO: still need ObjectProviders for this (private class in
-						// public constructor):
-						ObjectProviders.provider(context, WebFluxConfig.class, 5),
-						context.getBeanProvider(ResolvableType
-								.forClassWithGenerics(List.class, ViewResolver.class))));
+						context.getBeanProvider(HandlerMethodArgumentResolver.class),
+						context.getBeanProvider(CodecCustomizer.class),
+						context.getBeanProvider(ResourceHandlerRegistrationCustomizer.class),
+						context.getBeanProvider(ViewResolver.class)));
 	}
 
 	private void registerHttpHandlerAutoConfiguration() {
