@@ -1,0 +1,16 @@
+<!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<aspectj>
+	<weaver options="-Xlint:ignore -showWeaveInfo">
+		<include within="com.example.*" />
+		<include within="org.springframework..*" />
+		<include within="org.springframework.boot..*" />
+		<include within="org.springframework.context..*" />
+	</weaver>
+
+	<aspects>
+		<aspect name="com.example.aspects.AnnotationProcessingInterceptor" />
+		<aspect name="com.example.aspects.BootApplicationInterceptor" />
+		<aspect name="com.example.aspects.BootAutoConfigureInterceptor" />
+	</aspects>
+
+</aspectj>

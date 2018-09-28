@@ -1,0 +1,58 @@
+[.lead]
+This project shows how to build "micro" applications with Spring Cloud Function
+
+== Building the Apps
+
+Build the jar:
+
+```
+$ ./mvnw clean install
+```
+
+Run it
+
+```
+$ java -jar target/micro-0.0.1-SNAPSHOT.jar 
+...
+2018-05-23 10:03:41.776 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 1.885 seconds (JVM running for 3.769)
+...
+```
+
+== Building a Native Image
+
+The `BuncApplication` ought to be convertible to a native binary image using the Graal tools.
+
+Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it. You will need GraalVM 1.0.0-rc5 or later.
+
+Compute the classpath using the `graal` profile so that we don't crash on missing classes:
+
+```
+$ CP=`java -jar target/micro-0.0.1-SNAPSHOT.jar --thin.classpath --thin.profile=graal`
+```
+
+Then build an image:
+
+```
+$ native-image -Dio.netty.noUnsafe=true -H:Name=target/bunc -H:ReflectionConfigurationFiles=func.json -H:IncludeResources='META-INF/spring.factories|org/springframework/boot/logging/.*' --report-unsupported-elements-at-runtime -cp $CP com.example.app.BuncApplication
+$ ./target/bunc -Dorg.springframework.boot.logging.LoggingSystem=org.springframework.boot.logging.java.JavaLoggingSystem -Dspring.functional.enabled=true
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                        
+
+Aug 07, 2018 11:25:13 AM org.springframework.boot.StartupInfoLogger logStarting
+INFO: Starting application on tower with PID 11253 (started by dsyer in /home/dsyer/dev/demo/workspace/micro)
+Aug 07, 2018 11:25:13 AM org.springframework.boot.SpringApplication logStartupProfileInfo
+INFO: No active profile set, falling back to default profiles: default
+Aug 07, 2018 11:25:13 AM org.springframework.boot.web.embedded.netty.NettyWebServer start
+INFO: Netty started on port(s): 8080
+Aug 07, 2018 11:25:13 AM org.springframework.boot.StartupInfoLogger logStarted
+INFO: Started application in 0.036 seconds (JVM running for 0.04)
+Benchmark app started
+Started HttpServer: 40ms
+```
+
