@@ -18,7 +18,6 @@ package com.example.app;
 
 import java.util.Set;
 import java.util.function.Function;
-import java.util.logging.Level;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,6 +33,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * @author Dave Syer
@@ -69,10 +69,9 @@ public class Endpoint {
 		return route(POST("/"), request -> {
 			Class<?> inputType = this.inspector.getInputType(this.function);
 			Class<T> outputType = (Class<T>) this.inspector.getOutputType(this.function);
-			return ok().body((Flux<T>) this.function.apply(request.bodyToFlux(inputType)).log().onErrorContinue((e,o) -> {
-				e.printStackTrace();
-				System.err.println("########" + o);
-			}),
+			return ok().body(
+					Mono.from(
+							(Flux<T>) this.function.apply(request.bodyToFlux(inputType))),
 					outputType);
 		});
 	}
