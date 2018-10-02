@@ -59,4 +59,9 @@ public class BootAutoConfigureInterceptor {
 		}
 	}
 
+	static BootAutoConfigureInterceptor instance = new BootAutoConfigureInterceptor();
+
+	public static BootAutoConfigureInterceptor aspectOf() {
+		return instance;
+	}
 }

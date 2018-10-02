@@ -18,6 +18,10 @@ package com.example.app;
 
 import java.util.Set;
 import java.util.function.Function;
+import java.util.logging.Level;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.springframework.cloud.function.context.FunctionCatalog;
 import org.springframework.cloud.function.context.catalog.FunctionInspector;
@@ -38,6 +42,8 @@ import reactor.core.publisher.Flux;
 @Configuration
 public class Endpoint {
 
+	private static Log logger = LogFactory.getLog(Endpoint.class);
+
 	private Function<Flux<?>, Flux<?>> function;
 
 	private FunctionInspector inspector;
@@ -51,6 +57,7 @@ public class Endpoint {
 		Set<String> names = catalog.getNames(Function.class);
 		if (!names.isEmpty()) {
 			// TODO: function.name configuration
+			logger.info("Found functions: " + names);
 			return catalog.lookup(Function.class, names.iterator().next());
 		}
 		throw new IllegalStateException("No function defined");
@@ -59,10 +66,15 @@ public class Endpoint {
 	@SuppressWarnings({ "unchecked" })
 	@Bean
 	public <T> RouterFunction<?> userEndpoints() {
-		return route(POST("/"), request -> ok().body(
-				(Flux<T>) this.function.apply(
-						request.bodyToFlux(this.inspector.getInputType(this.function))),
-				(Class<T>) this.inspector.getOutputType(this.function)));
+		return route(POST("/"), request -> {
+			Class<?> inputType = this.inspector.getInputType(this.function);
+			Class<T> outputType = (Class<T>) this.inspector.getOutputType(this.function);
+			return ok().body((Flux<T>) this.function.apply(request.bodyToFlux(inputType)).log().onErrorContinue((e,o) -> {
+				e.printStackTrace();
+				System.err.println("########" + o);
+			}),
+					outputType);
+		});
 	}
 
 }

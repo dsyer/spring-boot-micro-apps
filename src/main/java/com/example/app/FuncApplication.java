@@ -11,6 +11,7 @@ import java.util.Set;
 
 import com.example.DemoFunction;
 import com.example.config.BeanCountingApplicationListener;
+import com.example.config.FunctionalEnvironmentPostProcessor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -138,12 +139,13 @@ public class FuncApplication implements Runnable, Closeable,
 			performPreinitialization();
 		}
 		else {
+			new FunctionalEnvironmentPostProcessor().postProcessEnvironment(context.getEnvironment(), null);
 			new ConfigFileApplicationListener().postProcessEnvironment(
 					context.getEnvironment(), new SpringApplication());
+			registerFunctionContext();
 		}
 		registerConverters();
 		registerConfigurationProperties();
-		registerFunctionContext();
 		context.registerBean(AutowiredAnnotationBeanPostProcessor.class);
 		registerDemoApplication();
 		registerGsonAutoConfiguration();

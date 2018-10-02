@@ -3,5 +3,8 @@ com.example.config.BeanCountingApplicationListener,\
 com.example.config.StartupApplicationListener,\
 com.example.config.ShutdownApplicationListener
 
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.example.config.FunctionalEnvironmentPostProcessor
+
 org.springframework.beans.BeanInfoFactory=\
 com.example.config.SpringBootBeanInfoFactory

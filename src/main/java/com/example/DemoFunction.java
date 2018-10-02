@@ -38,7 +38,7 @@ public class DemoFunction implements Function<String, String>,
 	@Override
 	public void initialize(GenericApplicationContext context) {
 		context.registerBean("demo", FunctionRegistration.class,
-				() -> new FunctionRegistration<DemoFunction>(this, "demo")
+				() -> new FunctionRegistration<DemoFunction>(this)
 						.type(FunctionType.from(String.class).to(String.class)));
 	}
 

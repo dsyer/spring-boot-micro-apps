@@ -11,6 +11,7 @@
 		<aspect name="com.example.aspects.AnnotationProcessingInterceptor" />
 		<aspect name="com.example.aspects.BootApplicationInterceptor" />
 		<aspect name="com.example.aspects.BootAutoConfigureInterceptor" />
+		<aspect name="com.example.aspects.WebInterceptor" />
 	</aspects>
 
 </aspectj>

@@ -22,7 +22,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<spring-framework.version>5.1.0.BUILD-SNAPSHOT</spring-framework.version>
 		<spring-cloud-function.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-function.version>
 		<thin.version>1.0.15.RELEASE</thin.version>
 		<start-class>com.example.app.BuncApplication</start-class>

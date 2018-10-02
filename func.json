@@ -187,6 +187,10 @@
 		"allDeclaredFields": true
 	},
 	{
+		"name": "com.example.config.FunctionalEnvironmentPostProcessor",
+		"allDeclaredConstructors": true
+	},
+	{
 		"name": "com.example.config.BeanCountingApplicationListener",
 		"allDeclaredConstructors": true
 	},

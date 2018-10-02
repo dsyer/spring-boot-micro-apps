@@ -32,4 +32,9 @@ public class BootApplicationInterceptor {
 		}
 	}
 
+	static BootApplicationInterceptor instance = new BootApplicationInterceptor();
+
+	public static BootApplicationInterceptor aspectOf() {
+		return instance;
+	}
 }
