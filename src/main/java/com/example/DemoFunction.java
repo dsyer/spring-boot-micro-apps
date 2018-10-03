@@ -27,19 +27,45 @@ import org.springframework.context.support.GenericApplicationContext;
  * @author Dave Syer
  *
  */
-public class DemoFunction implements Function<String, String>,
+public class DemoFunction implements Function<Foo, Foo>,
 		ApplicationContextInitializer<GenericApplicationContext> {
 
 	@Override
-	public String apply(String value) {
-		return value.toUpperCase();
+	public Foo apply(Foo value) {
+		return new Foo(value.getValue().toUpperCase());
 	}
 
 	@Override
 	public void initialize(GenericApplicationContext context) {
 		context.registerBean("demo", FunctionRegistration.class,
 				() -> new FunctionRegistration<DemoFunction>(this)
-						.type(FunctionType.from(String.class).to(String.class)));
+						.type(FunctionType.from(Foo.class).to(Foo.class)));
+	}
+
+}
+
+class Foo {
+
+	private String value;
+
+	public Foo() {
+	}
+
+	public Foo(String value) {
+		this.value = value;
+	}
+
+	public String getValue() {
+		return this.value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return "Foo [value=" + this.value + "]";
 	}
 
 }

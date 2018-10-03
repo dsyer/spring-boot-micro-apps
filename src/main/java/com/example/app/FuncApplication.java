@@ -4,7 +4,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -12,18 +11,15 @@ import java.util.Set;
 import com.example.DemoFunction;
 import com.example.config.BeanCountingApplicationListener;
 import com.example.config.FunctionalEnvironmentPostProcessor;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
-import org.springframework.boot.autoconfigure.gson.GsonBuilderCustomizer;
-import org.springframework.boot.autoconfigure.gson.GsonProperties;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.http.HttpProperties;
+import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
 import org.springframework.boot.autoconfigure.reactor.core.ReactorCoreProperties;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -64,7 +60,7 @@ import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.validation.Validator;
 import org.springframework.web.reactive.DispatcherHandler;
@@ -139,7 +135,8 @@ public class FuncApplication implements Runnable, Closeable,
 			performPreinitialization();
 		}
 		else {
-			new FunctionalEnvironmentPostProcessor().postProcessEnvironment(context.getEnvironment(), null);
+			new FunctionalEnvironmentPostProcessor()
+					.postProcessEnvironment(context.getEnvironment(), null);
 			new ConfigFileApplicationListener().postProcessEnvironment(
 					context.getEnvironment(), new SpringApplication());
 			registerFunctionContext();
@@ -148,7 +145,6 @@ public class FuncApplication implements Runnable, Closeable,
 		registerConfigurationProperties();
 		context.registerBean(AutowiredAnnotationBeanPostProcessor.class);
 		registerDemoApplication();
-		registerGsonAutoConfiguration();
 		registerWebServerFactoryCustomizerBeanPostProcessor();
 		registerReactiveWebServerFactoryAutoConfiguration();
 		registerErrorWebFluxAutoConfiguration();
@@ -218,7 +214,7 @@ public class FuncApplication implements Runnable, Closeable,
 	}
 
 	private void registerConfigurationProperties() {
-		context.registerBean(GsonProperties.class, () -> new GsonProperties());
+		context.registerBean(JacksonProperties.class, () -> new JacksonProperties());
 		context.registerBean(ServerProperties.class, () -> new ServerProperties());
 		context.registerBean(ResourceProperties.class, () -> new ResourceProperties());
 		context.registerBean(WebFluxProperties.class, () -> new WebFluxProperties());
@@ -351,8 +347,9 @@ public class FuncApplication implements Runnable, Closeable,
 				() -> new HttpMessageConverters(false, Collections.emptyList()));
 		context.registerBean(StringHttpMessageConverter.class,
 				this::stringHttpMessageConverter);
-		context.registerBean(GsonHttpMessageConverter.class,
-				() -> new GsonHttpMessageConverter(context.getBean(Gson.class)));
+		context.registerBean(MappingJackson2HttpMessageConverter.class,
+				() -> new MappingJackson2HttpMessageConverter(
+						context.getBean(ObjectMapper.class)));
 	}
 
 	StringHttpMessageConverter stringHttpMessageConverter() {
@@ -360,16 +357,6 @@ public class FuncApplication implements Runnable, Closeable,
 				context.getBean(HttpProperties.class).getEncoding().getCharset());
 		converter.setWriteAcceptCharset(false);
 		return converter;
-	}
-
-	private void registerGsonAutoConfiguration() {
-		GsonAutoConfiguration config = new GsonAutoConfiguration();
-		context.registerBean(GsonBuilder.class, () -> config.gsonBuilder(new ArrayList<>(
-				context.getBeansOfType(GsonBuilderCustomizer.class).values())));
-		context.registerBean(Gson.class,
-				() -> config.gson(context.getBean(GsonBuilder.class)));
-		context.registerBean(GsonBuilderCustomizer.class, () -> config
-				.standardGsonBuilderCustomizer(context.getBean(GsonProperties.class)));
 	}
 
 	private void registerReactorCoreAutoConfiguration() {

@@ -1,5 +1,15 @@
 [
 	{
+		"name": "com.example.micro.Foo",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "com.example.Foo",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
 		"name": "io.netty.channel.socket.nio.NioServerSocketChannel",
 		"methods": [
 			{
