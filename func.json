@@ -166,20 +166,6 @@
 		"allDeclaredFields": true
 	},
 	{
-		"name": "org.springframework.web.reactive.function.server.support.RouterFunctionMapping$SortedRouterFunctionsContainer",
-		"allPublicFields": true,
-		"allPublicMethods": true,
-		"allDeclaredMethods": true,
-		"allDeclaredFields": true
-	},
-	{
-		"name": "org.springframework.web.server.adapter.WebHttpHandlerBuilder$SortedBeanContainer",
-		"allPublicFields": true,
-		"allPublicMethods": true,
-		"allDeclaredMethods": true,
-		"allDeclaredFields": true
-	},
-	{
 		"name": "com.example.app.ReactorConfiguration",
 		"allPublicFields": true,
 		"allPublicMethods": true,

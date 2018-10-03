@@ -168,7 +168,6 @@ public class FuncApplication implements Runnable, Closeable,
 		// Graal needs this?
 		context.registerBean(Converter.class, () -> new SerializingConverter());
 		context.registerBean(GenericConverter.class, () -> new DummyGenericConverter());
-		context.registerBean(WebFilter.class, () -> new DummyWebFilter());
 	}
 
 	static class DummyWebFilter implements WebFilter {
