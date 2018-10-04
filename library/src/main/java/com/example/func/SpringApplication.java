@@ -38,10 +38,18 @@ public class SpringApplication extends org.springframework.boot.SpringApplicatio
 	}
 
 	public SpringApplication() {
-		super(Object.class);
+		super(SpringApplication.class);
+		// In a native image we are forced to have Tomcat on the "classpath"
+		setWebApplicationType(WebApplicationType.REACTIVE);
+	}
+	
+	@Override
+	public ConfigurableApplicationContext run(String... args) {
+		System.err.println("WebApplicationType: " + getWebApplicationType());
 		if (getWebApplicationType() == WebApplicationType.REACTIVE) {
 			setApplicationContextClass(ReactiveWebServerApplicationContext.class);
 		}
+		return super.run(args);
 	}
 
 	@Override

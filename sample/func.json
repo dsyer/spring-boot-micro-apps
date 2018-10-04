@@ -15,7 +15,7 @@
 		"allDeclaredMethods": true
 	},
 	{
-		"name": "java.lang.Object",
+		"name": "com.example.func.SpringApplication",
 		"allDeclaredConstructors": true,
 		"allDeclaredMethods": true
 	},
