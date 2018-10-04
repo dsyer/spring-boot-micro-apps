@@ -18,8 +18,11 @@ package com.example;
 
 import java.util.function.Function;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext;
 import org.springframework.cloud.function.context.FunctionRegistration;
 import org.springframework.cloud.function.context.FunctionType;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
 
@@ -27,8 +30,21 @@ import org.springframework.context.support.GenericApplicationContext;
  * @author Dave Syer
  *
  */
-public class DemoFunction implements Function<Foo, Foo>,
+public class DemoApplication implements Function<Foo, Foo>,
 		ApplicationContextInitializer<GenericApplicationContext> {
+	
+	public static void main(String[] args) {
+		SpringApplication application = new SpringApplication(DemoApplication.class) {
+			@Override
+			protected void load(ApplicationContext context, Object[] sources) {
+				// We don't want the annotation bean definition reader
+				// super.load(context, sources);
+			}
+		};
+		application.setRegisterShutdownHook(false);
+		application.setApplicationContextClass(ReactiveWebServerApplicationContext.class);
+		application.run();
+	}
 
 	@Override
 	public Foo apply(Foo value) {
@@ -38,7 +54,7 @@ public class DemoFunction implements Function<Foo, Foo>,
 	@Override
 	public void initialize(GenericApplicationContext context) {
 		context.registerBean("demo", FunctionRegistration.class,
-				() -> new FunctionRegistration<DemoFunction>(this)
+				() -> new FunctionRegistration<DemoApplication>(this)
 						.type(FunctionType.from(Foo.class).to(Foo.class)));
 	}
 

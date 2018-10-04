@@ -1,17 +1,14 @@
-package com.example.app;
+package com.example.func;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.example.DemoFunction;
-import com.example.config.BeanCountingApplicationListener;
 import com.example.config.FunctionalEnvironmentPostProcessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
@@ -38,7 +35,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.boot.web.codec.CodecCustomizer;
 import org.springframework.boot.web.embedded.netty.NettyReactiveWebServerFactory;
-import org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -60,6 +56,7 @@ import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.validation.Validator;
@@ -90,41 +87,14 @@ import org.springframework.web.server.i18n.LocaleContextResolver;
 import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 
-public class FuncApplication implements Runnable, Closeable,
+public class FuncInitializer implements
 		ApplicationContextInitializer<GenericApplicationContext> {
 
 	public static final String MARKER = "Benchmark app started";
 
+	private static final String PREFERRED_MAPPER_PROPERTY = "spring.http.converters.preferred-json-mapper";
+
 	private GenericApplicationContext context;
-
-	public static void main(String[] args) throws Exception {
-		long t0 = System.currentTimeMillis();
-		FuncApplication bean = new FuncApplication();
-		bean.run();
-		System.err.println(
-				"Started HttpServer: " + (System.currentTimeMillis() - t0) + "ms");
-		if (Boolean.getBoolean("demo.close")) {
-			bean.close();
-		}
-	}
-
-	@Override
-	public void close() throws IOException {
-		if (context != null) {
-			context.close();
-		}
-	}
-
-	@Override
-	public void run() {
-		ReactiveWebServerApplicationContext context = new ReactiveWebServerApplicationContext();
-		System.err.println("Initializing...");
-		initialize(context);
-		System.err.println("Refreshing...");
-		context.refresh();
-		System.err.println(MARKER);
-		new BeanCountingApplicationListener().log(context);
-	}
 
 	@Override
 	public void initialize(GenericApplicationContext context) {
@@ -334,11 +304,9 @@ public class FuncApplication implements Runnable, Closeable,
 	}
 
 	private void registerDemoApplication() {
-		new DemoFunction().initialize(context);
 		context.registerBean(Endpoint.class,
 				() -> new Endpoint(context.getBean(FunctionCatalog.class),
-						context.getBean(FunctionInspector.class)),
-				definition -> definition.setDependsOn("demo"));
+						context.getBean(FunctionInspector.class)));
 		context.registerBean(RouterFunction.class,
 				() -> context.getBean(Endpoint.class).userEndpoints());
 	}
@@ -349,9 +317,19 @@ public class FuncApplication implements Runnable, Closeable,
 				() -> new HttpMessageConverters(false, Collections.emptyList()));
 		context.registerBean(StringHttpMessageConverter.class,
 				this::stringHttpMessageConverter);
-		context.registerBean(MappingJackson2HttpMessageConverter.class,
-				() -> new MappingJackson2HttpMessageConverter(
-						context.getBean(ObjectMapper.class)));
+		if (ClassUtils.isPresent("com.google.gson.Gson", null)
+				&& "gson".equals(context.getEnvironment().getProperty(
+						FuncInitializer.PREFERRED_MAPPER_PROPERTY,
+						"gson"))) { 
+					context.registerBean(GsonHttpMessageConverter.class,
+									() -> new GsonHttpMessageConverter(context.getBean(Gson.class)));
+			
+		} else if (ClassUtils.isPresent(
+				"com.fasterxml.jackson.databind.ObjectMapper", null)) {
+			context.registerBean(MappingJackson2HttpMessageConverter.class,
+					() -> new MappingJackson2HttpMessageConverter(
+							context.getBean(ObjectMapper.class)));
+		}
 	}
 
 	StringHttpMessageConverter stringHttpMessageConverter() {
@@ -385,6 +363,27 @@ public class FuncApplication implements Runnable, Closeable,
 		});
 	}
 
+	// https://jira.spring.io/browse/SPR-17333
+	static class ClassUtils {
+
+		public static boolean isPresent(String string, ClassLoader classLoader) {
+			if (classLoader==null) {
+				classLoader = ClassUtils.class.getClassLoader();
+			}
+			try {
+				return Class.forName(string, false, classLoader) != null;
+			}
+			catch (Throwable e) {
+				try {
+					return Class.forName(string) != null;
+				}
+				catch (Throwable t) {
+					return false;
+				}
+			}
+		}
+		
+	}
 }
 
 class ReactorConfiguration {

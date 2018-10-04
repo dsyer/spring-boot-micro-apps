@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.app;
+package com.example.func;
 
 import java.util.Set;
 import java.util.function.Function;
