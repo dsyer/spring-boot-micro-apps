@@ -419,5 +419,10 @@
 				"parameterTypes": []
 			}
 		]
-	}
+	},
+    {
+      "name" : "com.fasterxml.jackson.databind.ObjectMapper",
+      "allPublicMethods": true,
+      "allDeclaredConstructors": true
+    }
 ]

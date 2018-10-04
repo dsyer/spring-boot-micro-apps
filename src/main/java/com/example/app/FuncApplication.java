@@ -132,9 +132,11 @@ public class FuncApplication implements Runnable, Closeable,
 		((AbstractAutowireCapableBeanFactory) context.getDefaultListableBeanFactory())
 				.setParameterNameDiscoverer(new NoopParameterNameDiscoverer());
 		if (context.getEnvironment().getProperty("boot.active", Boolean.class, false)) {
+			System.err.println("Boot active...");
 			performPreinitialization();
 		}
 		else {
+			System.err.println("Boot not active...");
 			new FunctionalEnvironmentPostProcessor()
 					.postProcessEnvironment(context.getEnvironment(), null);
 			new ConfigFileApplicationListener().postProcessEnvironment(
