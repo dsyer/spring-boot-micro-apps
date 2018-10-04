@@ -34,7 +34,7 @@ Then build an image:
 
 ```
 $ native-image -Dio.netty.noUnsafe=true -H:Name=target/bunc -H:ReflectionConfigurationFiles=func.json -H:IncludeResources='META-INF/spring.factories|org/springframework/boot/logging/.*' --report-unsupported-elements-at-runtime -cp $CP com.example.app.BuncApplication
-$ ./target/bunc -Dorg.springframework.boot.logging.LoggingSystem=org.springframework.boot.logging.java.JavaLoggingSystem -Dspring.functional.enabled=true
+$ ./target/bunc -Dorg.springframework.boot.logging.LoggingSystem=org.springframework.boot.logging.java.JavaLoggingSystem
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \

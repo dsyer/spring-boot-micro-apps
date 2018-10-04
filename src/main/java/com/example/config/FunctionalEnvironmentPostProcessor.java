@@ -39,6 +39,10 @@ public class FunctionalEnvironmentPostProcessor implements EnvironmentPostProces
 			if (!environment.getPropertySources().contains("defaultProperties")) {
 				map = new HashMap<>();
 				environment.getPropertySources().addLast(new MapPropertySource("defaultProperties", map));
+			} else {
+				// Make sure the map is mutable...
+				map = new HashMap<>((Map<String, Object>) environment.getPropertySources().get("defaultProperties").getSource());
+				environment.getPropertySources().replace("defaultProperties", new MapPropertySource("defaultProperties", map));
 			}
 			map = (Map<String, Object>) environment.getPropertySources().get("defaultProperties").getSource();
 			map.put("spring.functional.enabled", "true");
