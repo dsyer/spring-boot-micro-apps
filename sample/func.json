@@ -15,6 +15,11 @@
 		"allDeclaredMethods": true
 	},
 	{
+		"name": "java.lang.Object",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
 		"name": "io.netty.channel.socket.nio.NioServerSocketChannel",
 		"methods": [
 			{
