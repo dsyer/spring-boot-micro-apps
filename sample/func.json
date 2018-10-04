@@ -1,11 +1,16 @@
 [
 	{
-		"name": "com.example.micro.Foo",
+		"name": "com.example.Foo",
 		"allDeclaredConstructors": true,
 		"allDeclaredMethods": true
 	},
 	{
-		"name": "com.example.Foo",
+		"name": "com.example.DemoApplication",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "com.example.func.FuncInitializer",
 		"allDeclaredConstructors": true,
 		"allDeclaredMethods": true
 	},
@@ -155,7 +160,7 @@
 		"allDeclaredFields": true
 	},
 	{
-		"name": "com.example.app.EnableWebFluxConfigurationWrapper",
+		"name": "com.example.func.EnableWebFluxConfigurationWrapper",
 		"allPublicFields": true,
 		"allPublicMethods": true,
 		"allDeclaredMethods": true,
@@ -176,7 +181,7 @@
 		"allDeclaredFields": true
 	},
 	{
-		"name": "com.example.app.ReactorConfiguration",
+		"name": "com.example.func.ReactorConfiguration",
 		"allPublicFields": true,
 		"allPublicMethods": true,
 		"allDeclaredMethods": true,

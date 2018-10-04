@@ -27,14 +27,14 @@ Download https://github.com/oracle/graal/releases[GraalVM] and install it (add t
 Compute the classpath using the `graal` profile so that we don't crash on missing classes:
 
 ```
-$ CP=`java -jar target/micro-0.0.1-SNAPSHOT.jar --thin.classpath --thin.profile=graal`
+$ CP=`java -jar sample/target/micro-sample-0.0.1-SNAPSHOT.jar --thin.classpath --thin.profile=graal`
 ```
 
 Then build an image:
 
 ```
-$ native-image -Dio.netty.noUnsafe=true -H:Name=target/bunc -H:ReflectionConfigurationFiles=func.json -H:IncludeResources='META-INF/spring.factories|org/springframework/boot/logging/.*' --report-unsupported-elements-at-runtime -cp $CP com.example.app.BuncApplication
-$ ./target/bunc -Dorg.springframework.boot.logging.LoggingSystem=org.springframework.boot.logging.java.JavaLoggingSystem
+$ native-image -J-javaagent:/${HOME}/.m2/repository/org/aspectj/aspectjweaver/1.9.1/aspectjweaver-1.9.1.jar -Dio.netty.noUnsafe=true -H:Name=sample/target/demo -H:ReflectionConfigurationFiles=sample/func.json -H:IncludeResources='META-INF/spring.factories|org/springframework/boot/logging/.*' --report-unsupported-elements-at-runtime -cp $CP com.example.DemoApplication
+$ ./sample/target/demo -Dorg.springframework.boot.logging.LoggingSystem=org.springframework.boot.logging.java.JavaLoggingSystem
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
