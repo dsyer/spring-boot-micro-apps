@@ -43,7 +43,7 @@ public class DemoApplication implements Function<Foo, Foo>,
 		};
 		application.setRegisterShutdownHook(false);
 		application.setApplicationContextClass(ReactiveWebServerApplicationContext.class);
-		application.run();
+		application.run(args);
 	}
 
 	@Override

@@ -306,7 +306,7 @@ public class FuncInitializer implements
 	private void registerDemoApplication() {
 		context.registerBean(Endpoint.class,
 				() -> new Endpoint(context.getBean(FunctionCatalog.class),
-						context.getBean(FunctionInspector.class)));
+						context.getBean(FunctionInspector.class), context.getEnvironment()));
 		context.registerBean(RouterFunction.class,
 				() -> context.getBean(Endpoint.class).userEndpoints());
 	}

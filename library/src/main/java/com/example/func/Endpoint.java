@@ -26,6 +26,7 @@ import org.springframework.cloud.function.context.FunctionCatalog;
 import org.springframework.cloud.function.context.catalog.FunctionInspector;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.web.reactive.function.server.RouterFunction;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
@@ -48,16 +49,28 @@ public class Endpoint {
 
 	private FunctionInspector inspector;
 
-	public Endpoint(FunctionCatalog catalog, FunctionInspector inspector) {
+	public Endpoint(FunctionCatalog catalog, FunctionInspector inspector,
+			Environment environment) {
+		String handler = environment.resolvePlaceholders("${function.handler}");
+		if (handler.startsWith("$")) {
+			handler = null;
+		}
 		this.inspector = inspector;
-		this.function = extract(catalog);
+		this.function = extract(catalog, handler);
 	}
 
-	private Function<Flux<?>, Flux<?>> extract(FunctionCatalog catalog) {
+	private Function<Flux<?>, Flux<?>> extract(FunctionCatalog catalog, String handler) {
 		Set<String> names = catalog.getNames(Function.class);
 		if (!names.isEmpty()) {
 			// TODO: function.name configuration
 			logger.info("Found functions: " + names);
+			if (handler != null) {
+				logger.info("Configured function: " + handler);
+				if (!names.contains(handler)) {
+					throw new IllegalStateException("Cannot locate function: " + handler);
+				}
+				return catalog.lookup(Function.class, handler);
+			}
 			return catalog.lookup(Function.class, names.iterator().next());
 		}
 		throw new IllegalStateException("No function defined");
