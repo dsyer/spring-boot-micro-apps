@@ -1,14 +1,5 @@
 [.lead]
-This project shows how to build "micro" applications with Spring Cloud Function. There is a library which an app should include in its dependencies, and which contains a sub-class of `SpringApplication` from Spring Boot, which should be used to launch the application. The main application class needs to be an `ApplicationContextInitializer<GenericApplicationContext>` and it should register functions as beans of type `FunctionRegistration` in its `initialize()` method. Example:
-
-```java
-	@Override
-	public void initialize(GenericApplicationContext context) {
-		context.registerBean("demo", FunctionRegistration.class,
-				() -> new FunctionRegistration<DemoApplication>(this)
-						.type(FunctionType.from(Foo.class).to(Foo.class)));
-	}
-```
+This project shows how to build "micro" applications with Spring Cloud Function. There is a library which an app should include in its dependencies, and which contains a sub-class of `SpringApplication` from Spring Boot, which should be used to launch the application. The main application class can be either a `Function` (with explicit input and output types and a default constructor), or else it needs to be an `ApplicationContextInitializer<GenericApplicationContext>` that registers functions as beans of type `FunctionRegistration`.
 
 == Building the Apps
 

@@ -1,15 +1,5 @@
 [
 	{
-		"name": "com.example.Foo",
-		"allDeclaredConstructors": true,
-		"allDeclaredMethods": true
-	},
-	{
-		"name": "com.example.DemoApplication",
-		"allDeclaredConstructors": true,
-		"allDeclaredMethods": true
-	},
-	{
 		"name": "com.example.func.FuncInitializer",
 		"allDeclaredConstructors": true,
 		"allDeclaredMethods": true
@@ -429,10 +419,5 @@
 				"parameterTypes": []
 			}
 		]
-	},
-    {
-      "name" : "com.fasterxml.jackson.databind.ObjectMapper",
-      "allPublicMethods": true,
-      "allDeclaredConstructors": true
-    }
+	}
 ]
