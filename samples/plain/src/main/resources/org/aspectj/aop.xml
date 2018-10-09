@@ -3,8 +3,6 @@
 	<weaver options="-Xlint:ignore -showWeaveInfo">
 		<include within="com.example.*" />
 		<include within="org.springframework..*" />
-		<include within="org.springframework.boot..*" />
-		<include within="org.springframework.context..*" />
 	</weaver>
 
 	<aspects>
@@ -12,6 +10,7 @@
 		<aspect name="com.example.aspects.BootApplicationInterceptor" />
 		<aspect name="com.example.aspects.BootAutoConfigureInterceptor" />
 		<aspect name="com.example.aspects.WebInterceptor" />
+		<aspect name="com.example.aspects.ClassInterceptor" />
 	</aspects>
 
 </aspectj>

@@ -29,11 +29,6 @@ public class BootApplicationInterceptor {
 		return joinPoint.proceed();
 	}
 
-	@Around("execution(* ch.qos.logback.classic.spi..*(..)) && !cflow(execution com.example.aspects.BootApplicationInterceptor.*(..))")
-	public Object pkging(ProceedingJoinPoint joinPoint) throws Throwable {
-		return proceed(joinPoint);
-	}
-
 	@Around("execution(* org.springframework.boot.system.ApplicationHome.findSource(..))")
 	public Object source(ProceedingJoinPoint joinPoint) throws Throwable {
 		return proceed(joinPoint);

@@ -3,5 +3,8 @@
 		"name": "com.example.DemoApplication",
 		"allDeclaredConstructors": true,
 		"allDeclaredMethods": true
+	},
+	{
+		"name": "java.util.logging.LogManager"
 	}
 ]

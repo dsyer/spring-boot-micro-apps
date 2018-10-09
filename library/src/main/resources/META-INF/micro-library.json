@@ -412,6 +412,10 @@
 		"allDeclaredConstructors": true
 	},
 	{
+		"name": "org.springframework.boot.logging.logback.LogbackLoggingSystem",
+		"allDeclaredConstructors": true
+	},
+	{
 		"name": "org.springframework.beans.ExtendedBeanInfoFactory",
 		"methods": [
 			{
