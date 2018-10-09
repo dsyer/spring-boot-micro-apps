@@ -20,17 +20,11 @@ import java.util.function.Function;
 
 import com.example.func.SpringApplication;
 
-import org.springframework.cloud.function.context.FunctionRegistration;
-import org.springframework.cloud.function.context.FunctionType;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.support.GenericApplicationContext;
-
 /**
  * @author Dave Syer
  *
  */
-public class DemoApplication implements Function<Foo, Foo>,
-		ApplicationContextInitializer<GenericApplicationContext> {
+public class DemoApplication implements Function<Foo, Foo> {
 	
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
@@ -39,13 +33,6 @@ public class DemoApplication implements Function<Foo, Foo>,
 	@Override
 	public Foo apply(Foo value) {
 		return new Foo(value.getValue().toUpperCase());
-	}
-
-	@Override
-	public void initialize(GenericApplicationContext context) {
-		context.registerBean("demo", FunctionRegistration.class,
-				() -> new FunctionRegistration<DemoApplication>(this)
-						.type(FunctionType.from(Foo.class).to(Foo.class)));
 	}
 
 }

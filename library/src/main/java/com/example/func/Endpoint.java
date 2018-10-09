@@ -62,7 +62,6 @@ public class Endpoint {
 	private Function<Flux<?>, Flux<?>> extract(FunctionCatalog catalog, String handler) {
 		Set<String> names = catalog.getNames(Function.class);
 		if (!names.isEmpty()) {
-			// TODO: function.name configuration
 			logger.info("Found functions: " + names);
 			if (handler != null) {
 				logger.info("Configured function: " + handler);

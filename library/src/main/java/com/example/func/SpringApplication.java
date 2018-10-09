@@ -16,9 +16,13 @@
 
 package com.example.func;
 
+import java.util.function.Function;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext;
+import org.springframework.cloud.function.context.FunctionRegistration;
+import org.springframework.cloud.function.context.FunctionType;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -65,6 +69,7 @@ public class SpringApplication extends org.springframework.boot.SpringApplicatio
 
 	@Override
 	protected void load(ApplicationContext context, Object[] sources) {
+		GenericApplicationContext generic = (GenericApplicationContext) context;
 		for (Object source : sources) {
 			if (source instanceof Class<?>) {
 				Class<?> type = (Class<?>) source;
@@ -72,7 +77,15 @@ public class SpringApplication extends org.springframework.boot.SpringApplicatio
 					@SuppressWarnings("unchecked")
 					ApplicationContextInitializer<GenericApplicationContext> initializer = BeanUtils
 							.instantiateClass(type, ApplicationContextInitializer.class);
-					initializer.initialize((GenericApplicationContext) context);
+					initializer.initialize(generic);
+				}
+				else if (Function.class.isAssignableFrom(type)) {
+					Function<?, ?> function = BeanUtils.instantiateClass(type,
+							Function.class);
+					generic.registerBean("function", FunctionRegistration.class,
+							() -> new FunctionRegistration<>(function)
+									.type(FunctionType.of(type)));
+
 				}
 			}
 		}
