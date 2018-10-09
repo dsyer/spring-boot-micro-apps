@@ -1,5 +1,14 @@
 [.lead]
-This project shows how to build "micro" applications with Spring Cloud Function
+This project shows how to build "micro" applications with Spring Cloud Function. There is a library which an app should include in its dependencies, and which contains a sub-class of `SpringApplication` from Spring Boot, which should be used to launch the application. The main application class needs to be an `ApplicationContextInitializer<GenericApplicationContext>` and it should register functions as beans of type `FunctionRegistration` in its `initialize()` method. Example:
+
+```java
+	@Override
+	public void initialize(GenericApplicationContext context) {
+		context.registerBean("demo", FunctionRegistration.class,
+				() -> new FunctionRegistration<DemoApplication>(this)
+						.type(FunctionType.from(Foo.class).to(Foo.class)));
+	}
+```
 
 == Building the Apps
 
@@ -12,7 +21,7 @@ $ ./mvnw clean install
 Run it
 
 ```
-$ java -jar sample/target/micro-sample-0.0.1-SNAPSHOT.jar 
+$ java -jar sample/json/target/micro-sample-0.0.1-SNAPSHOT.jar 
 ...
 2018-05-23 10:03:41.776 [main] INFO  com.example.DemoApplication - Started DemoApplication in 1.885 seconds (JVM running for 3.769)
 ...
@@ -20,7 +29,7 @@ $ java -jar sample/target/micro-sample-0.0.1-SNAPSHOT.jar
 
 == Building a Native Image
 
-The `BuncApplication` ought to be convertible to a native binary image using the Graal tools.
+The `DemoApplication` ought to be convertible to a native binary image using the Graal tools.
 
 Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it. You will need GraalVM 1.0.0-rc7 or later.
 

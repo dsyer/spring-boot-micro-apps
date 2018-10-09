@@ -16,10 +16,13 @@
 
 package com.example.func;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 
 /**
  * @author Dave Syer
@@ -29,20 +32,20 @@ public class SpringApplication extends org.springframework.boot.SpringApplicatio
 
 	public static ConfigurableApplicationContext run(Class<?> primarySource,
 			String... args) {
-		return run(new Class<?>[] {}, args);
+		return run(new Class<?>[] { primarySource }, args);
 	}
 
 	public static ConfigurableApplicationContext run(Class<?>[] primarySources,
 			String[] args) {
-		return new SpringApplication().run(args);
+		return new SpringApplication(primarySources).run(args);
 	}
 
-	public SpringApplication() {
-		super(SpringApplication.class);
+	public SpringApplication(Class<?>... primarySources) {
+		super(primarySources);
 		// In a native image we are forced to have Tomcat on the "classpath"
 		setWebApplicationType(WebApplicationType.REACTIVE);
 	}
-	
+
 	@Override
 	public ConfigurableApplicationContext run(String... args) {
 		System.err.println("WebApplicationType: " + getWebApplicationType());
@@ -51,15 +54,27 @@ public class SpringApplication extends org.springframework.boot.SpringApplicatio
 		}
 		try {
 			return super.run(args);
-		} catch (Throwable t) {
+		}
+		catch (Throwable t) {
 			IllegalStateException e = new IllegalStateException(t);
 			System.err.println(e.getClass() + ": " + e);
+			e.printStackTrace();
 			throw new IllegalStateException("Failed to run");
 		}
 	}
 
-
 	@Override
 	protected void load(ApplicationContext context, Object[] sources) {
+		for (Object source : sources) {
+			if (source instanceof Class<?>) {
+				Class<?> type = (Class<?>) source;
+				if (ApplicationContextInitializer.class.isAssignableFrom(type)) {
+					@SuppressWarnings("unchecked")
+					ApplicationContextInitializer<GenericApplicationContext> initializer = BeanUtils
+							.instantiateClass(type, ApplicationContextInitializer.class);
+					initializer.initialize((GenericApplicationContext) context);
+				}
+			}
+		}
 	}
 }

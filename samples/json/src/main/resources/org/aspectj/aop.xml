@@ -2,7 +2,6 @@
 <aspectj>
 	<weaver options="-Xlint:ignore -showWeaveInfo">
 		<include within="com.example.*" />
-		<include within="ch.qos.logback..*" />
 		<include within="org.springframework..*" />
 		<include within="org.springframework.boot..*" />
 		<include within="org.springframework.context..*" />
