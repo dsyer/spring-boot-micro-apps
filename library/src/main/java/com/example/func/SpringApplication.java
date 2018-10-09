@@ -49,8 +49,15 @@ public class SpringApplication extends org.springframework.boot.SpringApplicatio
 		if (getWebApplicationType() == WebApplicationType.REACTIVE) {
 			setApplicationContextClass(ReactiveWebServerApplicationContext.class);
 		}
-		return super.run(args);
+		try {
+			return super.run(args);
+		} catch (Throwable t) {
+			IllegalStateException e = new IllegalStateException(t);
+			System.err.println(e.getClass() + ": " + e);
+			throw new IllegalStateException("Failed to run");
+		}
 	}
+
 
 	@Override
 	protected void load(ApplicationContext context, Object[] sources) {

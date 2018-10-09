@@ -38,6 +38,10 @@
 		]
 	},
 	{
+		"name": "org.springframework.cloud.function.context.FunctionRegistration",
+		"allDeclaredMethods": true
+	},
+	{
 		"name": "org.springframework.http.codec.support.DefaultServerCodecConfigurer",
 		"methods": [
 			{
@@ -294,10 +298,6 @@
 	},
 	{
 		"name": "org.springframework.boot.env.SystemEnvironmentPropertySourceEnvironmentPostProcessor",
-		"allDeclaredConstructors": true
-	},
-    {
-		"name": "org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientPropertiesEnvironmentPostProcessor",
 		"allDeclaredConstructors": true
 	},
 	{

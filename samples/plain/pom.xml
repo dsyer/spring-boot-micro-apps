@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.example</groupId>
-	<artifactId>micro-sample</artifactId>
+	<artifactId>micro-plain</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
@@ -15,7 +15,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
-	<name>micro</name>
+	<name>plain</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -51,6 +51,10 @@
 				<exclusion>
 					<groupId>io.netty</groupId>
 					<artifactId>netty-transport-native-unix-common</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.netty</groupId>
+					<artifactId>netty-codec-http2</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

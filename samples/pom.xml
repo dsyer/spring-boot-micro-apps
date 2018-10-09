@@ -15,9 +15,8 @@
 	<name>Parent Demo</name>
 
 	<modules>
-		<module>samples/plain</module>
-		<module>samples/json</module>
-		<module>library</module>
+		<module>json</module>
+		<module>plain</module>
 	</modules>
 
 	<properties>

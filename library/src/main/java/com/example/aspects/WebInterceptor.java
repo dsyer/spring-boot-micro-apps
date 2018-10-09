@@ -6,8 +6,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
-import org.springframework.web.server.ServerWebExchange;
-
 @Aspect
 public class WebInterceptor {
 
@@ -28,11 +26,15 @@ public class WebInterceptor {
 	private Object proceed(ProceedingJoinPoint joinPoint) {
 		try {
 			Object result = joinPoint.proceed();
-			System.err.println(joinPoint.toShortString() + ": " + result);
+			if (logger.isDebugEnabled()) {
+				logger.debug(joinPoint.toShortString() + ": " + result);
+			}
 			return result;
 		}
 		catch (Throwable t) {
-			System.err.println(joinPoint.toShortString() + ": " + t);
+			if (logger.isDebugEnabled()) {
+				logger.debug(joinPoint.toShortString() + ": " + t);
+			}
 			return null;
 		}
 	}
