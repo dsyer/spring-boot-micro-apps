@@ -6,5 +6,9 @@
 	},
 	{
 		"name": "java.util.logging.LogManager"
+	},
+		{
+		"name": "org.springframework.boot.logging.java.JavaLoggingSystem",
+		"allDeclaredConstructors": true
 	}
 ]

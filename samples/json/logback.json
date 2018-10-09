@@ -3,6 +3,10 @@
 		"name": "ch.qos.logback.core.Appender"
 	},
 	{
+		"name": "org.springframework.boot.logging.logback.LogbackLoggingSystem",
+		"allDeclaredConstructors": true
+	},
+	{
 		"name": "org.apache.logging.log4j.message.DefaultFlowMessageFactory",
 		"allDeclaredConstructors": true
 	},
