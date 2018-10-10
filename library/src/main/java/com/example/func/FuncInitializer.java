@@ -126,7 +126,6 @@ public class FuncInitializer implements
 		registerReactorCoreAutoConfiguration();
 		registerRestTemplateAutoConfiguration();
 		registerWebClientAutoConfiguration();
-		System.err.println("Registered");
 	}
 
 	private void registerFunctionContext() {

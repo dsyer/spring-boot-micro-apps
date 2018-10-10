@@ -25,7 +25,7 @@ import com.example.func.SpringApplication;
  *
  */
 public class DemoApplication implements Function<Foo, Foo> {
-	
+
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
 	}
