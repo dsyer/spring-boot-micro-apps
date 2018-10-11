@@ -20,9 +20,28 @@ $ java -jar sample/json/target/micro-sample-0.0.1-SNAPSHOT.jar
 
 == Building a Native Image
 
-The `DemoApplication` ought to be convertible to a native binary image using the Graal tools.
+The `DemoApplication` ought to be convertible to a native binary image using the Graal tools. There is a `Dockerfile` that should be able to do this:
 
-Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it. You will need GraalVM 1.0.0-rc7 or later.
+```
+$ docker build -t demo/demo .
+$ docker run -p 8080:8080 demo/demo
+...
+BeanInfo: com.example.func.ReactorConfiguration
+2018-10-11 10:33:20.929  INFO 1 --- [           main] o.s.b.web.embedded.netty.NettyWebServer  : Netty started on port(s): 8080
+2018-10-11 10:33:20.929  INFO 1 --- [           main] com.example.DemoApplication              : Started DemoApplication in 0.015 seconds (JVM running for 0.016)
+2018-10-11 10:33:20.929  INFO 1 --- [           main] c.e.c.BeanCountingApplicationListener    : Bean count: application=53
+```
+
+Then test it:
+
+```
+$ curl localhost:8080 -H "Content-Type: application/json" -d '{"value":"foo"}' -w '\n'
+{"value":"FOO"}
+```
+
+The docker build is parameterized with the sample name, so `docker build --build-arg SAMPLE=plain ....` or `docker build --build-arg SAMPLE=json ...` should work (the default is "json").
+
+To do the same thing manually (without docker) first download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it. You will need GraalVM 1.0.0-rc7 or later.
 
 Compute the classpath using the `graal` profile so that we don't crash on missing classes:
 
