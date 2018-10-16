@@ -12,7 +12,7 @@
 	<artifactId>parent-demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Parent Demo</name>
+	<name>Parent Demos</name>
 
 	<modules>
 		<module>samples/plain</module>
