@@ -87,8 +87,8 @@ import org.springframework.web.server.i18n.LocaleContextResolver;
 import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 
-public class FuncInitializer implements
-		ApplicationContextInitializer<GenericApplicationContext> {
+public class FuncInitializer
+		implements ApplicationContextInitializer<GenericApplicationContext> {
 
 	public static final String MARKER = "Benchmark app started";
 
@@ -101,14 +101,14 @@ public class FuncInitializer implements
 		this.context = context;
 		((AbstractAutowireCapableBeanFactory) context.getDefaultListableBeanFactory())
 				.setParameterNameDiscoverer(new NoopParameterNameDiscoverer());
+		new FunctionalEnvironmentPostProcessor()
+				.postProcessEnvironment(context.getEnvironment(), null);
 		if (context.getEnvironment().getProperty("boot.active", Boolean.class, false)) {
 			System.err.println("Boot active...");
 			performPreinitialization();
 		}
 		else {
 			System.err.println("Boot not active...");
-			new FunctionalEnvironmentPostProcessor()
-					.postProcessEnvironment(context.getEnvironment(), null);
 			new ConfigFileApplicationListener().postProcessEnvironment(
 					context.getEnvironment(), new SpringApplication());
 			registerFunctionContext();
@@ -306,7 +306,8 @@ public class FuncInitializer implements
 	private void registerDemoApplication() {
 		context.registerBean(Endpoint.class,
 				() -> new Endpoint(context.getBean(FunctionCatalog.class),
-						context.getBean(FunctionInspector.class), context.getEnvironment()));
+						context.getBean(FunctionInspector.class),
+						context.getEnvironment()));
 		context.registerBean(RouterFunction.class,
 				() -> context.getBean(Endpoint.class).userEndpoints());
 	}
@@ -319,13 +320,13 @@ public class FuncInitializer implements
 				this::stringHttpMessageConverter);
 		if (ClassUtils.isPresent("com.google.gson.Gson", null)
 				&& "gson".equals(context.getEnvironment().getProperty(
-						FuncInitializer.PREFERRED_MAPPER_PROPERTY,
-						"gson"))) { 
-					context.registerBean(GsonHttpMessageConverter.class,
-									() -> new GsonHttpMessageConverter(context.getBean(Gson.class)));
-			
-		} else if (ClassUtils.isPresent(
-				"com.fasterxml.jackson.databind.ObjectMapper", null)) {
+						FuncInitializer.PREFERRED_MAPPER_PROPERTY, "gson"))) {
+			context.registerBean(GsonHttpMessageConverter.class,
+					() -> new GsonHttpMessageConverter(context.getBean(Gson.class)));
+
+		}
+		else if (ClassUtils.isPresent("com.fasterxml.jackson.databind.ObjectMapper",
+				null)) {
 			context.registerBean(MappingJackson2HttpMessageConverter.class,
 					() -> new MappingJackson2HttpMessageConverter(
 							context.getBean(ObjectMapper.class)));
@@ -367,7 +368,7 @@ public class FuncInitializer implements
 	static class ClassUtils {
 
 		public static boolean isPresent(String string, ClassLoader classLoader) {
-			if (classLoader==null) {
+			if (classLoader == null) {
 				classLoader = ClassUtils.class.getClassLoader();
 			}
 			try {
@@ -382,7 +383,7 @@ public class FuncInitializer implements
 				}
 			}
 		}
-		
+
 	}
 }
 

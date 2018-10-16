@@ -5,9 +5,18 @@
 		"allDeclaredMethods": true
 	},
 	{
-		"name": "com.example.func.SpringApplication",
+		"name": "org.springframework.cloud.function.context.SpringApplication",
 		"allDeclaredConstructors": true,
 		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.springframework.boot.SpringApplication",
+		"allDeclaredConstructors": true,
+		"allDeclaredFields": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.springframework.web.reactive.DispatcherHandler"
 	},
 	{
 		"name": "io.netty.channel.socket.nio.NioServerSocketChannel",

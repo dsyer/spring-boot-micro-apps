@@ -273,5 +273,9 @@
 	{
 		"name": "ch.qos.logback.core.ConsoleAppender",
 		"allDeclaredConstructors": true
+	},
+	{
+		"name": "org.slf4j.bridge.SLF4JBridgeHandler",
+		"allDeclaredConstructors": true
 	}
 ]

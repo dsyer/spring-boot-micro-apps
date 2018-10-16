@@ -34,7 +34,7 @@ public class BootApplicationInterceptor {
 		return proceed(joinPoint);
 	}
 
-	@Around("execution(* org.springframework.boot.SpringApplication.getSpringFactoriesInstances(..))")
+	@Around("execution(* org.springframework.boot.SpringApplication+.getSpringFactoriesInstances(..))")
 	public Object factories(ProceedingJoinPoint joinPoint) throws Throwable {
 		return proceed(joinPoint);
 	}

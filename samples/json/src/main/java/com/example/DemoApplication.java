@@ -18,7 +18,7 @@ package com.example;
 
 import java.util.function.Function;
 
-import com.example.func.SpringApplication;
+import org.springframework.cloud.function.context.SpringApplication;
 
 /**
  * @author Dave Syer

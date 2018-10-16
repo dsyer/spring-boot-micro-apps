@@ -18,10 +18,9 @@ package com.example;
 
 import java.util.function.Function;
 
-import com.example.func.SpringApplication;
-
 import org.springframework.cloud.function.context.FunctionRegistration;
 import org.springframework.cloud.function.context.FunctionType;
+import org.springframework.cloud.function.context.SpringApplication;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
 
