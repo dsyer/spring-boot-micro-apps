@@ -4,23 +4,18 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
-import com.example.config.FunctionalEnvironmentPostProcessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.http.HttpProperties;
 import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
 import org.springframework.boot.autoconfigure.reactor.core.ReactorCoreProperties;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.ReactiveWebServerFactoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.ReactiveWebServerFactoryCustomizer;
 import org.springframework.boot.autoconfigure.web.reactive.ResourceHandlerRegistrationCustomizer;
@@ -30,9 +25,6 @@ import org.springframework.boot.autoconfigure.web.reactive.WebFluxProperties;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxRegistrations;
 import org.springframework.boot.autoconfigure.web.reactive.error.ErrorWebFluxAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
-import org.springframework.boot.context.config.ConfigFileApplicationListener;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.boot.web.codec.CodecCustomizer;
 import org.springframework.boot.web.embedded.netty.NettyReactiveWebServerFactory;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
@@ -42,23 +34,18 @@ import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
 import org.springframework.boot.web.server.WebServerFactoryCustomizerBeanPostProcessor;
 import org.springframework.cloud.function.context.FunctionCatalog;
 import org.springframework.cloud.function.context.catalog.FunctionInspector;
-import org.springframework.cloud.function.context.config.ContextFunctionCatalogInitializer;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.core.ResolvableType;
-import org.springframework.core.convert.TypeDescriptor;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.core.convert.converter.GenericConverter;
-import org.springframework.core.serializer.support.SerializingConverter;
-import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.reactive.HttpHandler;
+import org.springframework.util.ClassUtils;
 import org.springframework.validation.Validator;
 import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.reactive.HandlerMapping;
@@ -77,15 +64,11 @@ import org.springframework.web.reactive.result.method.annotation.ResponseBodyRes
 import org.springframework.web.reactive.result.method.annotation.ResponseEntityResultHandler;
 import org.springframework.web.reactive.result.view.ViewResolutionResultHandler;
 import org.springframework.web.reactive.result.view.ViewResolver;
-import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 import org.springframework.web.server.i18n.LocaleContextResolver;
 
 import reactor.core.publisher.Hooks;
-import reactor.core.publisher.Mono;
 
 public class FuncInitializer
 		implements ApplicationContextInitializer<GenericApplicationContext> {
@@ -94,98 +77,23 @@ public class FuncInitializer
 
 	private static final String PREFERRED_MAPPER_PROPERTY = "spring.http.converters.preferred-json-mapper";
 
-	private GenericApplicationContext context;
-
 	@Override
 	public void initialize(GenericApplicationContext context) {
-		this.context = context;
 		((AbstractAutowireCapableBeanFactory) context.getDefaultListableBeanFactory())
 				.setParameterNameDiscoverer(new NoopParameterNameDiscoverer());
-		new FunctionalEnvironmentPostProcessor()
-				.postProcessEnvironment(context.getEnvironment(), null);
-		if (context.getEnvironment().getProperty("boot.active", Boolean.class, false)) {
-			System.err.println("Boot active...");
-			performPreinitialization();
-		}
-		else {
-			System.err.println("Boot not active...");
-			new ConfigFileApplicationListener().postProcessEnvironment(
-					context.getEnvironment(), new SpringApplication());
-			registerFunctionContext();
-		}
-		registerConverters();
-		registerConfigurationProperties();
-		context.registerBean(AutowiredAnnotationBeanPostProcessor.class);
-		registerDemoApplication();
-		registerWebServerFactoryCustomizerBeanPostProcessor();
-		registerReactiveWebServerFactoryAutoConfiguration();
-		registerErrorWebFluxAutoConfiguration();
-		registerWebFluxAutoConfiguration();
-		registerHttpHandlerAutoConfiguration();
-		registerHttpMessageConvertersAutoConfiguration();
-		registerReactorCoreAutoConfiguration();
-		registerRestTemplateAutoConfiguration();
-		registerWebClientAutoConfiguration();
+		registerConfigurationProperties(context);
+		registerEndpoint(context);
+		registerWebServerFactoryCustomizerBeanPostProcessor(context);
+		registerReactiveWebServerFactoryAutoConfiguration(context);
+		registerErrorWebFluxAutoConfiguration(context);
+		registerWebFluxAutoConfiguration(context);
+		registerHttpHandlerAutoConfiguration(context);
+		registerHttpMessageConvertersAutoConfiguration(context);
+		registerReactorCoreAutoConfiguration(context);
+		registerWebClientAutoConfiguration(context);
 	}
 
-	private void registerFunctionContext() {
-		new ContextFunctionCatalogInitializer().initialize(context);
-	}
-
-	private void registerConverters() {
-		// Graal needs this?
-		context.registerBean(Converter.class, () -> new SerializingConverter());
-		context.registerBean(GenericConverter.class, () -> new DummyGenericConverter());
-	}
-
-	static class DummyWebFilter implements WebFilter {
-		@Override
-		public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-			return chain.filter(exchange);
-		}
-	}
-
-	static class DummyGenericConverter implements GenericConverter {
-
-		@Override
-		public Set<ConvertiblePair> getConvertibleTypes() {
-			return Collections.emptySet();
-		}
-
-		@Override
-		public Object convert(Object source, TypeDescriptor sourceType,
-				TypeDescriptor targetType) {
-			return null;
-		}
-
-	}
-
-	private void performPreinitialization() {
-		try {
-			Thread thread = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					runSafely(() -> new DefaultFormattingConversionService());
-				}
-
-				public void runSafely(Runnable runnable) {
-					try {
-						runnable.run();
-					}
-					catch (Throwable ex) {
-						// Ignore
-					}
-				}
-
-			}, "background-preinit");
-			thread.start();
-		}
-		catch (Exception ex) {
-		}
-	}
-
-	private void registerConfigurationProperties() {
+	private void registerConfigurationProperties(GenericApplicationContext context) {
 		context.registerBean(JacksonProperties.class, () -> new JacksonProperties());
 		context.registerBean(ServerProperties.class, () -> new ServerProperties());
 		context.registerBean(ResourceProperties.class, () -> new ResourceProperties());
@@ -195,12 +103,14 @@ public class FuncInitializer
 				() -> new ReactorCoreProperties());
 	}
 
-	private void registerWebServerFactoryCustomizerBeanPostProcessor() {
+	private void registerWebServerFactoryCustomizerBeanPostProcessor(
+			GenericApplicationContext context) {
 		context.registerBean("webServerFactoryCustomizerBeanPostProcessor",
 				WebServerFactoryCustomizerBeanPostProcessor.class);
 	}
 
-	private void registerReactiveWebServerFactoryAutoConfiguration() {
+	private void registerReactiveWebServerFactoryAutoConfiguration(
+			GenericApplicationContext context) {
 		ReactiveWebServerFactoryAutoConfiguration config = new ReactiveWebServerFactoryAutoConfiguration();
 		context.registerBean(ReactiveWebServerFactoryCustomizer.class,
 				() -> config.reactiveWebServerFactoryCustomizer(
@@ -209,16 +119,18 @@ public class FuncInitializer
 				() -> new NettyReactiveWebServerFactory());
 	}
 
-	private void registerErrorWebFluxAutoConfiguration() {
+	private void registerErrorWebFluxAutoConfiguration(
+			GenericApplicationContext context) {
 		context.registerBean(ErrorAttributes.class, () -> new DefaultErrorAttributes(
 				context.getBean(ServerProperties.class).getError().isIncludeException()));
 		context.registerBean(ErrorWebExceptionHandler.class, () -> {
-			return errorWebFluxAutoConfiguration()
+			return errorWebFluxAutoConfiguration(context)
 					.errorWebExceptionHandler(context.getBean(ErrorAttributes.class));
 		});
 	}
 
-	private ErrorWebFluxAutoConfiguration errorWebFluxAutoConfiguration() {
+	private ErrorWebFluxAutoConfiguration errorWebFluxAutoConfiguration(
+			GenericApplicationContext context) {
 		ServerProperties serverProperties = context.getBean(ServerProperties.class);
 		ResourceProperties resourceProperties = context.getBean(ResourceProperties.class);
 		ServerCodecConfigurer serverCodecs = context.getBean(ServerCodecConfigurer.class);
@@ -228,7 +140,7 @@ public class FuncInitializer
 				serverCodecs, context);
 	}
 
-	private void registerWebFluxAutoConfiguration() {
+	private void registerWebFluxAutoConfiguration(GenericApplicationContext context) {
 		context.registerBean(EnableWebFluxConfigurationWrapper.class,
 				() -> new EnableWebFluxConfigurationWrapper(context));
 		context.registerBean(HandlerFunctionAdapter.class,
@@ -298,12 +210,12 @@ public class FuncInitializer
 								.forClassWithGenerics(List.class, ViewResolver.class))));
 	}
 
-	private void registerHttpHandlerAutoConfiguration() {
+	private void registerHttpHandlerAutoConfiguration(GenericApplicationContext context) {
 		context.registerBean(HttpHandler.class,
 				() -> WebHttpHandlerBuilder.applicationContext(context).build());
 	}
 
-	private void registerDemoApplication() {
+	private void registerEndpoint(GenericApplicationContext context) {
 		context.registerBean(Endpoint.class,
 				() -> new Endpoint(context.getBean(FunctionCatalog.class),
 						context.getBean(FunctionInspector.class),
@@ -312,12 +224,13 @@ public class FuncInitializer
 				() -> context.getBean(Endpoint.class).userEndpoints());
 	}
 
-	private void registerHttpMessageConvertersAutoConfiguration() {
+	private void registerHttpMessageConvertersAutoConfiguration(
+			GenericApplicationContext context) {
 		// TODO: re-instate default message converters
 		context.registerBean(HttpMessageConverters.class,
 				() -> new HttpMessageConverters(false, Collections.emptyList()));
 		context.registerBean(StringHttpMessageConverter.class,
-				this::stringHttpMessageConverter);
+				() -> stringHttpMessageConverter(context));
 		if (ClassUtils.isPresent("com.google.gson.Gson", null)
 				&& "gson".equals(context.getEnvironment().getProperty(
 						FuncInitializer.PREFERRED_MAPPER_PROPERTY, "gson"))) {
@@ -333,57 +246,26 @@ public class FuncInitializer
 		}
 	}
 
-	StringHttpMessageConverter stringHttpMessageConverter() {
+	private StringHttpMessageConverter stringHttpMessageConverter(
+			GenericApplicationContext context) {
 		StringHttpMessageConverter converter = new StringHttpMessageConverter(
 				context.getBean(HttpProperties.class).getEncoding().getCharset());
 		converter.setWriteAcceptCharset(false);
 		return converter;
 	}
 
-	private void registerReactorCoreAutoConfiguration() {
+	private void registerReactorCoreAutoConfiguration(GenericApplicationContext context) {
 		context.registerBean(ReactorConfiguration.class,
 				() -> new ReactorConfiguration());
 	}
 
-	private void registerRestTemplateAutoConfiguration() {
-		RestTemplateAutoConfiguration config = new RestTemplateAutoConfiguration(
-				context.getDefaultListableBeanFactory()
-						.getBeanProvider(HttpMessageConverters.class),
-				context.getDefaultListableBeanFactory().getBeanProvider(ResolvableType
-						.forClassWithGenerics(List.class, RestTemplateCustomizer.class)));
-		context.registerBean(RestTemplateBuilder.class,
-				() -> config.restTemplateBuilder());
-	}
-
-	private void registerWebClientAutoConfiguration() {
+	private void registerWebClientAutoConfiguration(GenericApplicationContext context) {
 		context.registerBean(WebClient.Builder.class, () -> {
 			WebClientAutoConfiguration config = new WebClientAutoConfiguration(
 					context.getBeanProvider(ResolvableType.forClassWithGenerics(
 							List.class, WebClientCustomizer.class)));
 			return config.webClientBuilder();
 		});
-	}
-
-	// https://jira.spring.io/browse/SPR-17333
-	static class ClassUtils {
-
-		public static boolean isPresent(String string, ClassLoader classLoader) {
-			if (classLoader == null) {
-				classLoader = ClassUtils.class.getClassLoader();
-			}
-			try {
-				return Class.forName(string, false, classLoader) != null;
-			}
-			catch (Throwable e) {
-				try {
-					return Class.forName(string) != null;
-				}
-				catch (Throwable t) {
-					return false;
-				}
-			}
-		}
-
 	}
 }
 

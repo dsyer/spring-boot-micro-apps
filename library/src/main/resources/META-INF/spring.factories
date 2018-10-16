@@ -1,13 +1,5 @@
-org.springframework.context.ApplicationListener=\
-com.example.config.BeanCountingApplicationListener,\
-com.example.config.StartupApplicationListener,\
-com.example.config.ShutdownApplicationListener
-
 org.springframework.context.ApplicationContextInitializer=\
 com.example.func.FuncInitializer
-
-org.springframework.boot.env.EnvironmentPostProcessor=\
-com.example.config.FunctionalEnvironmentPostProcessor
 
 org.springframework.beans.BeanInfoFactory=\
 com.example.config.SpringBootBeanInfoFactory

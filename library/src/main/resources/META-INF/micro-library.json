@@ -196,22 +196,6 @@
 		"allDeclaredFields": true
 	},
 	{
-		"name": "com.example.config.FunctionalEnvironmentPostProcessor",
-		"allDeclaredConstructors": true
-	},
-	{
-		"name": "com.example.config.BeanCountingApplicationListener",
-		"allDeclaredConstructors": true
-	},
-	{
-		"name": "com.example.config.StartupApplicationListener",
-		"allDeclaredConstructors": true
-	},
-	{
-		"name": "com.example.config.ShutdownApplicationListener",
-		"allDeclaredConstructors": true
-	},
-	{
 		"name": "com.example.config.SpringBootBeanInfoFactory",
 		"allDeclaredConstructors": true
 	},
