@@ -1,2 +1,2 @@
-jar = samples/json/target/*.jar
+jar = "samples/json/target/*.jar"
 native = true
