@@ -1,7 +1,5 @@
 package com.example.func;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.http.HttpProperties;
 import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
@@ -36,7 +33,6 @@ import org.springframework.cloud.function.context.FunctionCatalog;
 import org.springframework.cloud.function.context.catalog.FunctionInspector;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.core.ResolvableType;
 import org.springframework.format.support.FormattingConversionService;
@@ -79,8 +75,6 @@ public class FuncInitializer
 
 	@Override
 	public void initialize(GenericApplicationContext context) {
-		((AbstractAutowireCapableBeanFactory) context.getDefaultListableBeanFactory())
-				.setParameterNameDiscoverer(new NoopParameterNameDiscoverer());
 		registerConfigurationProperties(context);
 		registerEndpoint(context);
 		registerWebServerFactoryCustomizerBeanPostProcessor(context);
@@ -285,20 +279,6 @@ class EnableWebFluxConfigurationWrapper extends EnableWebFluxConfiguration {
 	public EnableWebFluxConfigurationWrapper(GenericApplicationContext context) {
 		super(context.getBean(WebFluxProperties.class),
 				context.getBeanProvider(WebFluxRegistrations.class));
-	}
-
-}
-
-class NoopParameterNameDiscoverer implements ParameterNameDiscoverer {
-
-	@Override
-	public String[] getParameterNames(Method method) {
-		return null;
-	}
-
-	@Override
-	public String[] getParameterNames(Constructor<?> ctor) {
-		return null;
 	}
 
 }
