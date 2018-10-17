@@ -27,7 +27,13 @@ import org.springframework.cloud.function.context.SpringApplication;
 public class DemoApplication implements Function<Foo, Foo> {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
+		try {
+			SpringApplication.run(DemoApplication.class, args);
+		} catch (Throwable t) {
+			System.err.println(t);
+			t.printStackTrace();
+			throw new IllegalStateException();
+		}
 	}
 
 	@Override

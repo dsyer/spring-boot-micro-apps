@@ -18,12 +18,16 @@ package com.example.func;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootContextLoader;
+import org.springframework.cloud.function.context.config.ContextFunctionCatalogInitializer;
 
 /**
+ * A test context loader for Spring Boot applications that use the
+ * {@link ContextFunctionCatalogInitializer}.
+ * 
  * @author Dave Syer
  *
  */
-public class FunctionalContextLoader extends SpringBootContextLoader {
+public class FunctionalTestContextLoader extends SpringBootContextLoader {
 
 	@Override
 	protected SpringApplication getSpringApplication() {

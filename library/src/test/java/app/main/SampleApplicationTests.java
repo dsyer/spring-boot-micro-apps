@@ -18,7 +18,7 @@ package app.main;
 
 import java.util.function.Function;
 
-import com.example.func.FunctionalContextLoader;
+import com.example.func.FunctionalTestContextLoader;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,8 +44,8 @@ import reactor.core.publisher.Mono;
  * @author Dave Syer
  *
  */
-@SpringBootTest(properties = "spring.functional.enabled=true", webEnvironment = WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes = TestApplication.class, loader = FunctionalContextLoader.class)
+@SpringBootTest(properties = "spring.functional.enabled=true", webEnvironment = WebEnvironment.NONE)
+@ContextConfiguration(classes = TestApplication.class, loader = FunctionalTestContextLoader.class)
 @RunWith(SpringRunner.class)
 public class SampleApplicationTests {
 
