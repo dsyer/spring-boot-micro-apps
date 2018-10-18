@@ -96,7 +96,7 @@ public class FunctionEndpointInitializer
 				thread.start();
 			}
 		}
-		
+
 		private void callback(DisposableServer server) {
 			logger.info("Server started");
 			try {
