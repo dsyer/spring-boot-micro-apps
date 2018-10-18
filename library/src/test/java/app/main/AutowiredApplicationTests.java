@@ -20,20 +20,20 @@ import java.util.function.Function;
 
 import com.example.func.FunctionalSpringBootTest;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.cloud.function.context.FunctionRegistration;
 import org.springframework.cloud.function.context.FunctionType;
 import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.server.WebHandler;
+
+import static org.hamcrest.Matchers.containsString;
 
 import reactor.core.publisher.Mono;
 
@@ -43,23 +43,23 @@ import reactor.core.publisher.Mono;
  */
 @FunctionalSpringBootTest
 @RunWith(SpringRunner.class)
-public class SampleApplicationTests {
-
-	private WebTestClient client;
+@AutoConfigureWebTestClient
+public class AutowiredApplicationTests {
 
 	@Autowired
-	private ConfigurableApplicationContext context;
-
-	@Before
-	public void init() {
-		WebHandler webHandler = context.getBean(WebHandler.class);
-		client = WebTestClient.bindToWebHandler(webHandler).build();
-	}
+	private WebTestClient client;
 
 	@Test
 	public void ok() {
 		client.post().uri("/").body(Mono.just("foo"), String.class).exchange()
 				.expectStatus().isOk().expectBody(String.class).isEqualTo("FOO");
+	}
+
+	@Test
+	public void bang() {
+		client.post().uri("/").body(Mono.just("bang"), String.class).exchange()
+				.expectStatus().is5xxServerError().expectBody(String.class)
+				.value(containsString("status"));
 	}
 
 	@Test
@@ -74,6 +74,9 @@ public class SampleApplicationTests {
 
 		@Override
 		public String apply(String value) {
+			if (value.equals("bang")) {
+				throw new IllegalStateException("Planned");
+			}
 			return value.toUpperCase();
 		}
 

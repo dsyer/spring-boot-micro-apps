@@ -8,6 +8,11 @@ import java.util.function.Function;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.boot.autoconfigure.web.ErrorProperties;
+import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
+import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
+import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.cloud.function.context.FunctionCatalog;
 import org.springframework.cloud.function.context.catalog.FunctionInspector;
 import org.springframework.context.ApplicationContext;
@@ -17,12 +22,15 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.SmartApplicationListener;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.util.ClassUtils;
+import org.springframework.web.reactive.function.server.HandlerStrategies;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
-import org.springframework.web.server.WebHandler;
+import org.springframework.web.server.WebExceptionHandler;
+import org.springframework.web.server.adapter.HttpWebHandlerAdapter;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
@@ -44,8 +52,10 @@ public class FunctionEndpointInitializer
 	}
 
 	private void registerWebFluxAutoConfiguration(GenericApplicationContext context) {
-		context.registerBean("webHandler", WebHandler.class, () -> RouterFunctions
-				.toWebHandler(context.getBean(RouterFunction.class)));
+		context.registerBean(DefaultErrorWebExceptionHandler.class,
+				() -> errorHandler(context));
+		context.registerBean(WebHttpHandlerBuilder.WEB_HANDLER_BEAN_NAME,
+				HttpWebHandlerAdapter.class, () -> httpHandler(context));
 		context.addApplicationListener(new ServerListener(context));
 	}
 
@@ -56,6 +66,29 @@ public class FunctionEndpointInitializer
 						context.getEnvironment()));
 		context.registerBean(RouterFunction.class,
 				() -> context.getBean(FunctionEndpointFactory.class).functionEndpoints());
+	}
+
+	private HttpWebHandlerAdapter httpHandler(GenericApplicationContext context) {
+		return (HttpWebHandlerAdapter) RouterFunctions.toHttpHandler(
+				context.getBean(RouterFunction.class),
+				HandlerStrategies.empty()
+						.exceptionHandler(context.getBean(WebExceptionHandler.class))
+						.codecs(config -> config.registerDefaults(true)).build());
+	}
+
+	private DefaultErrorWebExceptionHandler errorHandler(
+			GenericApplicationContext context) {
+		context.registerBean(ErrorAttributes.class, () -> new DefaultErrorAttributes());
+		context.registerBean(ErrorProperties.class, () -> new ErrorProperties());
+		context.registerBean(ResourceProperties.class, () -> new ResourceProperties());
+		DefaultErrorWebExceptionHandler handler = new DefaultErrorWebExceptionHandler(
+				context.getBean(ErrorAttributes.class),
+				context.getBean(ResourceProperties.class),
+				context.getBean(ErrorProperties.class), context);
+		ServerCodecConfigurer codecs = ServerCodecConfigurer.create();
+		handler.setMessageWriters(codecs.getWriters());
+		handler.setMessageReaders(codecs.getReaders());
+		return handler;
 	}
 
 	private static class ServerListener implements SmartApplicationListener {
@@ -83,8 +116,7 @@ public class FunctionEndpointInitializer
 			Integer port = Integer.valueOf(context.getEnvironment()
 					.resolvePlaceholders("${server.port:${PORT:8080}}"));
 			if (port >= 0) {
-				HttpHandler handler = WebHttpHandlerBuilder.applicationContext(context)
-						.build();
+				HttpHandler handler = context.getBean(HttpHandler.class);
 				ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(
 						handler);
 				HttpServer httpServer = HttpServer.create().host("localhost").port(port)
