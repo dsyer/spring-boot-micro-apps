@@ -20,7 +20,7 @@ import java.util.function.Function;
 
 import org.springframework.cloud.function.context.FunctionRegistration;
 import org.springframework.cloud.function.context.FunctionType;
-import org.springframework.cloud.function.context.SpringApplication;
+import org.springframework.cloud.function.context.FunctionalSpringApplication;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
 
@@ -32,7 +32,7 @@ public class DemoApplication implements Function<String, String>,
 		ApplicationContextInitializer<GenericApplicationContext> {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
+		FunctionalSpringApplication.run(DemoApplication.class, args);
 	}
 
 	@Override

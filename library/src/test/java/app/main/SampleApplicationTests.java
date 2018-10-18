@@ -18,7 +18,7 @@ package app.main;
 
 import java.util.function.Function;
 
-import com.example.func.FunctionalTestContextLoader;
+import com.example.func.FunctionalSpringBootTest;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,25 +26,20 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.function.context.FunctionRegistration;
 import org.springframework.cloud.function.context.FunctionType;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import app.main.SampleApplicationTests.TestApplication;
 import reactor.core.publisher.Mono;
 
 /**
  * @author Dave Syer
  *
  */
-@SpringBootTest(properties = "spring.functional.enabled=true", webEnvironment = WebEnvironment.NONE)
-@ContextConfiguration(classes = TestApplication.class, loader = FunctionalTestContextLoader.class)
+@FunctionalSpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureWebTestClient
 public class SampleApplicationTests {

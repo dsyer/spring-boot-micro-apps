@@ -31,6 +31,6 @@ public class FunctionalTestContextLoader extends SpringBootContextLoader {
 
 	@Override
 	protected SpringApplication getSpringApplication() {
-		return new org.springframework.cloud.function.context.SpringApplication();
+		return new org.springframework.cloud.function.context.FunctionalSpringApplication();
 	}
 }

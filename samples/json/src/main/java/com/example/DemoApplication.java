@@ -18,7 +18,7 @@ package com.example;
 
 import java.util.function.Function;
 
-import org.springframework.cloud.function.context.SpringApplication;
+import org.springframework.cloud.function.context.FunctionalSpringApplication;
 
 /**
  * @author Dave Syer
@@ -28,7 +28,7 @@ public class DemoApplication implements Function<Foo, Foo> {
 
 	public static void main(String[] args) {
 		try {
-			SpringApplication.run(DemoApplication.class, args);
+			FunctionalSpringApplication.run(DemoApplication.class, args);
 		} catch (Throwable t) {
 			System.err.println(t);
 			t.printStackTrace();
