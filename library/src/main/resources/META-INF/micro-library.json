@@ -9,7 +9,12 @@
 		"allDeclaredConstructors": true
 	},
 	{
-		"name": "org.springframework.cloud.function.context.SpringApplication",
+		"name": "org.springframework.cloud.function.context.FunctionalSpringApplication",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.springframework.cloud.function.context.config.ContextFunctionCatalogInitializer$DummyProcessor",
 		"allDeclaredConstructors": true,
 		"allDeclaredMethods": true
 	},
@@ -17,6 +22,21 @@
 		"name": "org.springframework.boot.SpringApplication",
 		"allDeclaredConstructors": true,
 		"allDeclaredFields": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.springframework.context.annotation.CommonAnnotationBeanPostProcessor",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.springframework.context.event.DefaultEventListenerFactory",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.springframework.context.event.EventListenerMethodProcessor",
+		"allDeclaredConstructors": true,
 		"allDeclaredMethods": true
 	},
 	{
