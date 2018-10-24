@@ -18,19 +18,11 @@ package com.example;
 
 import java.util.function.Function;
 
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.cloud.function.context.FunctionalSpringApplication;
-
 /**
  * @author Dave Syer
  *
  */
-@SpringBootConfiguration
 public class DemoApplication implements Function<Foo, Foo> {
-
-	public static void main(String[] args) {
-		FunctionalSpringApplication.run(DemoApplication.class, args);
-	}
 
 	@Override
 	public Foo apply(Foo value) {

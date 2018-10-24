@@ -17,6 +17,7 @@
 	<modules>
 		<module>json</module>
 		<module>plain</module>
+		<module>pof</module>
 	</modules>
 
 	<properties>
