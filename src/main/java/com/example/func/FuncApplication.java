@@ -90,6 +90,7 @@ import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 import org.springframework.web.server.i18n.LocaleContextResolver;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
@@ -105,7 +106,13 @@ public class FuncApplication implements Runnable, Closeable,
 
 	@Bean
 	public RouterFunction<?> userEndpoints() {
-		return route(GET("/"), request -> ok().body(Mono.just("Hello"), String.class));
+		return route(GET("/"),
+				request -> ok().body(Mono.just("Hello"), String.class))
+						.andRoute(POST("/"),
+								request -> ok().body(
+										request.bodyToFlux(String.class)
+												.map(value -> value.toUpperCase()),
+										String.class));
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -332,7 +339,8 @@ public class FuncApplication implements Runnable, Closeable,
 						context.getBean(WebFluxProperties.class), context,
 						context.getBeanProvider(HandlerMethodArgumentResolver.class),
 						context.getBeanProvider(CodecCustomizer.class),
-						context.getBeanProvider(ResourceHandlerRegistrationCustomizer.class),
+						context.getBeanProvider(
+								ResourceHandlerRegistrationCustomizer.class),
 						context.getBeanProvider(ViewResolver.class)));
 	}
 

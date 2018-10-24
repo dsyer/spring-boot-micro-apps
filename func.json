@@ -46,12 +46,8 @@
 	},
 	{
 		"name": "org.springframework.boot.context.properties.ConversionServiceDeducer$Factory",
-		"methods": [
-			{
-				"name": "<init>",
-				"parameterTypes": []
-			}
-		]
+		"allPublicMethods": true,
+		"allDeclaredConstructors": true
 	},
 	{
 		"name": "org.springframework.boot.autoconfigure.web.reactive.error.ErrorWebFluxAutoConfiguration",
@@ -120,10 +116,6 @@
 		]
 	},
 	{
-		"name": "org.springframework.boot.context.properties.ConversionServiceDeducer$Factory",
-		"allPublicMethods": true
-	},
-	{
 		"name": "reactor.core.publisher.Mono",
 		"allPublicFields": true,
 		"allPublicMethods": true,
@@ -146,20 +138,6 @@
 	},
 	{
 		"name": "org.springframework.beans.factory.Aware",
-		"allPublicFields": true,
-		"allPublicMethods": true,
-		"allDeclaredMethods": true,
-		"allDeclaredFields": true
-	},
-	{
-		"name": "org.springframework.web.reactive.function.server.support.RouterFunctionMapping$SortedRouterFunctionsContainer",
-		"allPublicFields": true,
-		"allPublicMethods": true,
-		"allDeclaredMethods": true,
-		"allDeclaredFields": true
-	},
-	{
-		"name": "org.springframework.web.server.adapter.WebHttpHandlerBuilder$SortedBeanContainer",
 		"allPublicFields": true,
 		"allPublicMethods": true,
 		"allDeclaredMethods": true,

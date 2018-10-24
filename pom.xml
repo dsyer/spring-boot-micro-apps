@@ -55,7 +55,7 @@
 				</exclusion>
 				<exclusion>
 					<groupId>io.netty</groupId>
-					<artifactId>netty-transport-native-unix-common</artifactId>
+					<artifactId>netty-codec-http2</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
