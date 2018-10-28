@@ -1,17 +1,17 @@
 [
 	{
-		"name": "com.example.func.FunctionEndpointInitializer",
-		"allDeclaredConstructors": true,
-		"allDeclaredMethods": true
-	},
-	{
 		"name": "com.example.config.SpringBootBeanInfoFactory",
 		"allDeclaredConstructors": true
 	},
 	{
+		"name": "org.springframework.cloud.function.web.function.FunctionEndpointInitializer",
+		"allDeclaredConstructors": true,
+		"allPublicMethods": true
+	},
+	{
 		"name": "org.springframework.cloud.function.context.FunctionalSpringApplication",
 		"allDeclaredConstructors": true,
-		"allDeclaredMethods": true
+		"allPublicMethods": true
 	},
 	{
 		"name": "org.springframework.cloud.function.context.config.ContextFunctionCatalogInitializer$DummyProcessor",

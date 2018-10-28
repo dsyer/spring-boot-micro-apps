@@ -43,6 +43,10 @@
 			<artifactId>spring-cloud-function-context</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-function-web</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-json</artifactId>
 			<optional>true</optional>
@@ -65,7 +69,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<optional>true</optional>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

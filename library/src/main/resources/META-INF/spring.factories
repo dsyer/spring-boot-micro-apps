@@ -1,5 +1,2 @@
-org.springframework.context.ApplicationContextInitializer=\
-com.example.func.FunctionEndpointInitializer
-
 org.springframework.beans.BeanInfoFactory=\
 com.example.config.SpringBootBeanInfoFactory

@@ -39,6 +39,11 @@ public class BootApplicationInterceptor {
 		return proceed(joinPoint);
 	}
 
+	@Around("execution(* org.springframework.boot.SpringApplication+.run(..))")
+	public Object run(ProceedingJoinPoint joinPoint) throws Throwable {
+		return proceed(joinPoint);
+	}
+
 	@Around("execution(* org.springframework.boot.logging.LoggingSystem+.*(..))")
 	public Object logging(ProceedingJoinPoint joinPoint) throws Throwable {
 		return proceed(joinPoint);

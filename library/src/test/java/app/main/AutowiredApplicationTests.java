@@ -18,18 +18,13 @@ package app.main;
 
 import java.util.function.Function;
 
-import com.example.func.FunctionalSpringBootTest;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.cloud.function.context.FunctionRegistration;
-import org.springframework.cloud.function.context.FunctionType;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.cloud.function.context.test.FunctionalSpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -69,8 +64,7 @@ public class AutowiredApplicationTests {
 	}
 
 	@SpringBootConfiguration
-	public static class TestApplication implements Function<String, String>,
-			ApplicationContextInitializer<GenericApplicationContext> {
+	public static class TestApplication implements Function<String, String>{
 
 		@Override
 		public String apply(String value) {
@@ -78,13 +72,6 @@ public class AutowiredApplicationTests {
 				throw new IllegalStateException("Planned");
 			}
 			return value.toUpperCase();
-		}
-
-		@Override
-		public void initialize(GenericApplicationContext context) {
-			context.registerBean(FunctionRegistration.class,
-					() -> new FunctionRegistration<>(this, "function")
-							.type(FunctionType.from(String.class).to(String.class)));
 		}
 
 	}
