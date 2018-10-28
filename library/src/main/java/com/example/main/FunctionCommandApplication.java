@@ -24,6 +24,7 @@ import java.util.function.Function;
 import org.reactivestreams.Publisher;
 
 import org.springframework.boot.Banner.Mode;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.cloud.function.context.FunctionCatalog;
@@ -41,14 +42,16 @@ import reactor.core.publisher.Flux;
  * @author Dave Syer
  *
  */
-public class CommandApplicationInitializer
+public class FunctionCommandApplication
 		implements ApplicationContextInitializer<GenericApplicationContext> {
 
 	public static void main(String[] args) throws Exception {
-		FunctionalSpringApplication application = new FunctionalSpringApplication(CommandApplicationInitializer.class);
+		FunctionalSpringApplication application = new FunctionalSpringApplication(
+				FunctionCommandApplication.class);
 		application.setWebApplicationType(WebApplicationType.NONE);
 		application.setBannerMode(Mode.OFF);
-		application.setDefaultProperties(Collections.singletonMap("logging.level.root", "off"));
+		application.setDefaultProperties(
+				Collections.singletonMap("logging.level.root", "off"));
 		application.run(args);
 	}
 
@@ -58,7 +61,7 @@ public class CommandApplicationInitializer
 				() -> new CommandApplicationRunner(context.getEnvironment(),
 						context.getBean(FunctionInspector.class),
 						context.getBean(FunctionCatalog.class),
-						context.getBean(JsonMapper.class)));
+						context.getBeanProvider(JsonMapper.class)));
 	}
 
 }
@@ -76,11 +79,11 @@ class CommandApplicationRunner implements CommandLineRunner {
 	private Environment environment;
 
 	public CommandApplicationRunner(Environment environment, FunctionInspector inspector,
-			FunctionCatalog catalog, JsonMapper mapper) {
+			FunctionCatalog catalog, ObjectProvider<JsonMapper> mapper) {
 		this.environment = environment;
 		this.inspector = inspector;
 		this.catalog = catalog;
-		this.mapper = mapper;
+		this.mapper = mapper.getIfAvailable();
 	}
 
 	@Override
@@ -89,7 +92,7 @@ class CommandApplicationRunner implements CommandLineRunner {
 		Class<?> inputType = this.inspector.getInputType(this.function);
 		String body = StreamUtils.copyToString(System.in, Charset.defaultCharset());
 		Flux<?> result = null;
-		if (String.class.isAssignableFrom(inputType)) {
+		if (String.class.isAssignableFrom(inputType) || this.mapper == null) {
 			result = Flux.from(this.function.apply(Flux.just(body)));
 		}
 		else {

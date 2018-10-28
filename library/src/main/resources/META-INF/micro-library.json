@@ -228,6 +228,10 @@
 		"allDeclaredConstructors": true
 	},
 	{
+		"name": "org.springframework.boot.autoconfigure.diagnostics.analyzer.NoSuchBeanDefinitionFailureAnalyzer",
+		"allDeclaredConstructors": true
+	},
+	{
 		"name": "org.springframework.boot.diagnostics.analyzer.NoUniqueBeanDefinitionFailureAnalyzer",
 		"allDeclaredConstructors": true
 	},
