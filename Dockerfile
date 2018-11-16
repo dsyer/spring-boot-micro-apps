@@ -1,18 +1,21 @@
+# syntax=docker/dockerfile:experimental
 FROM openjdk:8-jdk-alpine as build
 WORKDIR /workspace/app
+ARG HOME=/root
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 COPY samples samples
 COPY library library
-RUN ./mvnw dependency:get -Dartifact=org.springframework.boot.experimental:spring-boot-thin-launcher:1.0.17.RELEASE:jar:exec -Dtransitive=false
-RUN ./mvnw install -DskipTests
-VOLUME /root/.m2
+RUN --mount=type=cache,target=${HOME}/.m2 ./mvnw dependency:get -Dartifact=org.springframework.boot.experimental:spring-boot-thin-launcher:1.0.17.RELEASE:jar:exec -Dtransitive=false
+RUN --mount=type=cache,target=${HOME}/.m2 ./mvnw install -DskipTests
+VOLUME ${HOME}/.m2
 
 FROM dsyer/graalvm-native-image:1.0.0-rc7 as native
 WORKDIR /workspace/app
+ARG HOME=/root
 ARG SAMPLE=json
-ARG THINJAR=/root/.m2/repository/org/springframework/boot/experimental/spring-boot-thin-launcher/1.0.17.RELEASE/spring-boot-thin-launcher-1.0.17.RELEASE-exec.jar
+ARG THINJAR=/root/.m2/repository/org/springframework/boot/experimental/spring-boot-thin-launcher/1.0.22.RELEASE/spring-boot-thin-launcher-1.0.22.RELEASE-exec.jar
 COPY --from=build /root/.m2 /root/.m2
 COPY --from=build /workspace/app/samples/${SAMPLE}/target/*.jar target/
 COPY --from=build /workspace/app/samples/${SAMPLE}/*.json target/
