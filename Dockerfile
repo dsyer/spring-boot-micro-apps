@@ -12,7 +12,7 @@ VOLUME /root/.m2
 FROM dsyer/graalvm-native-image:1.0.0-rc7 as native
 WORKDIR /workspace/app
 ARG SAMPLE=json
-ARG THINJAR=${HOME}/.m2/repository/org/springframework/boot/experimental/spring-boot-thin-launcher/1.0.17.RELEASE/spring-boot-thin-launcher-1.0.17.RELEASE-exec.jar
+ARG THINJAR=/root/.m2/repository/org/springframework/boot/experimental/spring-boot-thin-launcher/1.0.17.RELEASE/spring-boot-thin-launcher-1.0.17.RELEASE-exec.jar
 COPY --from=build /root/.m2 /root/.m2
 COPY --from=build /workspace/app/samples/${SAMPLE}/target/*.jar target/
 COPY --from=build /workspace/app/samples/${SAMPLE}/*.json target/
