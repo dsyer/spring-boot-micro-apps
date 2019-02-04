@@ -49,7 +49,7 @@ The apps are already systematically benchmarked here with regular JVMs: https://
 
 The `MicroApplication` ought to be convertible to a native binary image using the Graal tools (the others, maybe not so easy because they all use Spring more heavily). The netty reflection configuration we need is probably the same as the https://medium.com/graalvm/instant-netty-startup-using-graalvm-native-image-generation-ed6f14ff7692[blog], so we copied that over (hence the extra jar that needs to be installed above).
 
-Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it. You will need GraalVM 1.0.0-rc5 or later.
+Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it. You will need GraalVM 1.0.0-rc12 or later.
 
 Compute the classpath using the `graal` profile so that we don't crash on missing JSR330 and jzlib classes:
 
@@ -60,7 +60,7 @@ $ CP=`java -jar target/micro-0.0.1-SNAPSHOT.jar --thin.classpath --thin.profile=
 Then build an image:
 
 ```
-$ native-image -Dio.netty.noUnsafe=true -H:Name=target/micro -H:ReflectionConfigurationFiles=micro.json --report-unsupported-elements-at-runtime --delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder,org.springframework.core.io.VfsUtils,io.netty.handler.ssl.JdkNpnApplicationProtocolNegotiator,io.netty.handler.ssl.ReferenceCountedOpenSslEngine -cp $CP com.example.micro.MicroApplication
+$ native-image -Dio.netty.noUnsafe=true -H:Name=target/micro -H:ReflectionConfigurationFiles=micro.json --report-unsupported-elements-at-runtime --allow-incomplete-classpath --delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder,org.springframework.core.io.VfsUtils,io.netty.handler.ssl.JdkNpnApplicationProtocolNegotiator,io.netty.handler.ssl.ReferenceCountedOpenSslEngine -cp $CP com.example.micro.MicroApplication
 ```
 
 Then run it:
@@ -75,7 +75,7 @@ Excellent!
 You can do the same with `BuncApplication` (full Spring Boot, but manually configured):
 
 ```
-$ native-image -Dio.netty.noUnsafe=true -H:Name=target/bunc -Dio.netty.noUnsafe=true -Dio.netty.noJdkZlibDecoder=true -Dio.netty.noJdkZlibEncoder=true -H:ReflectionConfigurationFiles=func.json --report-unsupported-elements-at-runtime --delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder,org.springframework.core.io.VfsUtils,io.netty.handler.ssl.JdkNpnApplicationProtocolNegotiator,io.netty.handler.ssl.ReferenceCountedOpenSslEngine -cp $CP com.example.func.BuncApplication
+$ native-image -Dio.netty.noUnsafe=true -H:Name=target/bunc -Dio.netty.noUnsafe=true -Dio.netty.noJdkZlibDecoder=true -Dio.netty.noJdkZlibEncoder=true -H:ReflectionConfigurationFiles=func.json --report-unsupported-elements-at-runtime --allow-incomplete-classpath --delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder,org.springframework.core.io.VfsUtils,io.netty.handler.ssl.JdkNpnApplicationProtocolNegotiator,io.netty.handler.ssl.ReferenceCountedOpenSslEngine -cp $CP com.example.func.BuncApplication
 $ ./target/bunc
 
   .   ____          _            __ _ _

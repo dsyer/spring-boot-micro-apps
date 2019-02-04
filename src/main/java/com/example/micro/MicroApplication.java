@@ -64,7 +64,7 @@ public class MicroApplication {
 										String.class)));
 		context.registerBean(DefaultErrorWebExceptionHandler.class,
 				() -> errorHandler(context));
-		context.registerBean(HttpHandler.class, () -> httpHandler(context));
+		context.registerBean("webHandler", HttpHandler.class, () -> httpHandler(context));
 		context.refresh();
 		return context;
 	}

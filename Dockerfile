@@ -5,20 +5,20 @@ COPY .mvn .mvn
 COPY pom.xml .
 COPY src ./src
 COPY *.json ./
-RUN ./mvnw dependency:get -Dartifact=org.springframework.boot.experimental:spring-boot-thin-launcher:1.0.17.RELEASE:jar:exec -Dtransitive=false
+RUN ./mvnw dependency:get -Dartifact=org.springframework.boot.experimental:spring-boot-thin-launcher:1.0.20.RELEASE:jar:exec -Dtransitive=false
 RUN ./mvnw install -DskipTests
 VOLUME /root/.m2
 
-FROM dsyer/graalvm-native-image:1.0.0-rc7 as native
+FROM dsyer/graalvm-native-image:1.0.0-rc12 as native
 WORKDIR /workspace/app
 ARG SAMPLE=com.example.func.BuncApplication
-ARG THINJAR=/root/.m2/repository/org/springframework/boot/experimental/spring-boot-thin-launcher/1.0.17.RELEASE/spring-boot-thin-launcher-1.0.17.RELEASE-exec.jar
+ARG THINJAR=/root/.m2/repository/org/springframework/boot/experimental/spring-boot-thin-launcher/1.0.20.RELEASE/spring-boot-thin-launcher-1.0.20.RELEASE-exec.jar
 COPY --from=build /root/.m2 /root/.m2
 COPY --from=build /workspace/app/target/*.jar target/
 COPY --from=build /workspace/app/*.json ./
 ENV PATH="${PATH}:/usr/lib/graalvm/bin"
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
-RUN native-image --no-server --static -J-XX:+UnlockExperimentalVMOptions -J-XX:+UseCGroupMemoryLimitForHeap -Dio.netty.noUnsafe=true -Dio.netty.noJdkZlibDecoder=true -Dio.netty.noJdkZlibEncoder=true -H:Name=target/demo -H:ReflectionConfigurationFiles=`echo *.json | tr ' ' ,` -H:IncludeResources='META-INF/.*.json|META-INF/spring.factories|org/springframework/boot/logging/.*' --delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder,org.springframework.core.io.VfsUtils,io.netty.handler.ssl.JdkNpnApplicationProtocolNegotiator,io.netty.handler.ssl.ReferenceCountedOpenSslEngine  --report-unsupported-elements-at-runtime -cp `java -jar ${THINJAR} --thin.archive=target/dependency --thin.classpath --thin.profile=graal` ${SAMPLE}
+RUN native-image --no-server --static -J-XX:+UnlockExperimentalVMOptions -J-XX:+UseCGroupMemoryLimitForHeap -Dio.netty.noUnsafe=true -Dio.netty.noJdkZlibDecoder=true -Dio.netty.noJdkZlibEncoder=true -H:Name=target/demo -H:ReflectionConfigurationFiles=`echo *.json | tr ' ' ,` -H:IncludeResources='META-INF/.*.json|META-INF/spring.factories|org/springframework/boot/logging/.*' --allow-incomplete-classpath --delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder,org.springframework.core.io.VfsUtils,io.netty.handler.ssl.JdkNpnApplicationProtocolNegotiator,io.netty.handler.ssl.ReferenceCountedOpenSslEngine  --report-unsupported-elements-at-runtime -cp `java -jar ${THINJAR} --thin.archive=target/dependency --thin.classpath --thin.profile=graal` ${SAMPLE}
 
 FROM alpine
 WORKDIR /workspace/app
