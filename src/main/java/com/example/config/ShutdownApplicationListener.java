@@ -15,14 +15,12 @@
  */
 package com.example.config;
 
-import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
@@ -32,7 +30,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.ReflectionUtils;
 
 /**
  * @author Dave Syer
@@ -44,6 +41,7 @@ public class ShutdownApplicationListener
 		ApplicationContextAware {
 
 	private static final String SHUTDOWN_LISTENER = "SHUTDOWN_LISTENER";
+
 	public static final String MARKER = "Benchmark app stopped";
 
 	private ApplicationContext context;
@@ -84,15 +82,7 @@ public class ShutdownApplicationListener
 	}
 
 	private Set<Class<?>> sources(ApplicationReadyEvent event) {
-		Method method = ReflectionUtils.findMethod(SpringApplication.class,
-				"getAllSources");
-		if (method == null) {
-			method = ReflectionUtils.findMethod(SpringApplication.class, "getSources");
-		}
-		ReflectionUtils.makeAccessible(method);
-		@SuppressWarnings("unchecked")
-		Set<Object> objects = (Set<Object>) ReflectionUtils.invokeMethod(method,
-				event.getSpringApplication());
+		Set<Object> objects = event.getSpringApplication().getAllSources();
 		Set<Class<?>> result = new LinkedHashSet<>();
 		for (Object object : objects) {
 			if (object instanceof String) {
@@ -102,4 +92,5 @@ public class ShutdownApplicationListener
 		}
 		return result;
 	}
+
 }

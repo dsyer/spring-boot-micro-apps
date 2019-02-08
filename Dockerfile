@@ -25,4 +25,4 @@ WORKDIR /workspace/app
 VOLUME /tmp
 COPY --from=native /workspace/app/target/demo .
 EXPOSE 8080
-ENTRYPOINT ["./demo"]
+ENTRYPOINT ["./demo", "-Dorg.springframework.boot.logging.LoggingSystem=none"]
