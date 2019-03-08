@@ -13,6 +13,9 @@ import com.example.config.BeanCountingApplicationListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import reactor.core.publisher.Hooks;
+import reactor.core.publisher.Mono;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
@@ -94,9 +97,6 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
-import reactor.core.publisher.Hooks;
-import reactor.core.publisher.Mono;
-
 public class FuncApplication implements Runnable, Closeable,
 		ApplicationContextInitializer<GenericApplicationContext> {
 
@@ -176,10 +176,12 @@ public class FuncApplication implements Runnable, Closeable,
 	}
 
 	static class DummyWebFilter implements WebFilter {
+
 		@Override
 		public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 			return chain.filter(exchange);
 		}
+
 	}
 
 	static class DummyGenericConverter implements GenericConverter {
@@ -262,19 +264,19 @@ public class FuncApplication implements Runnable, Closeable,
 		context.registerBean(ErrorAttributes.class, () -> new DefaultErrorAttributes(
 				context.getBean(ServerProperties.class).getError().isIncludeException()));
 		context.registerBean(ErrorWebExceptionHandler.class, () -> {
-			return errorWebFluxAutoConfiguration()
-					.errorWebExceptionHandler(context.getBean(ErrorAttributes.class));
+			return errorWebFluxAutoConfiguration().errorWebExceptionHandler(
+					context.getBean(ErrorAttributes.class),
+					context.getBean(ResourceProperties.class),
+					context.getDefaultListableBeanFactory()
+							.getBeanProvider(ResolvableType.forClassWithGenerics(
+									List.class, ViewResolver.class)),
+					context.getBean(ServerCodecConfigurer.class), context);
 		});
 	}
 
 	private ErrorWebFluxAutoConfiguration errorWebFluxAutoConfiguration() {
 		ServerProperties serverProperties = context.getBean(ServerProperties.class);
-		ResourceProperties resourceProperties = context.getBean(ResourceProperties.class);
-		ServerCodecConfigurer serverCodecs = context.getBean(ServerCodecConfigurer.class);
-		return new ErrorWebFluxAutoConfiguration(serverProperties, resourceProperties,
-				context.getDefaultListableBeanFactory().getBeanProvider(ResolvableType
-						.forClassWithGenerics(List.class, ViewResolver.class)),
-				serverCodecs, context);
+		return new ErrorWebFluxAutoConfiguration(serverProperties);
 	}
 
 	private void registerWebFluxAutoConfiguration() {
@@ -386,13 +388,14 @@ public class FuncApplication implements Runnable, Closeable,
 	}
 
 	private void registerRestTemplateAutoConfiguration() {
-		RestTemplateAutoConfiguration config = new RestTemplateAutoConfiguration(
-				context.getDefaultListableBeanFactory()
-						.getBeanProvider(HttpMessageConverters.class),
-				context.getDefaultListableBeanFactory().getBeanProvider(ResolvableType
-						.forClassWithGenerics(List.class, RestTemplateCustomizer.class)));
+		RestTemplateAutoConfiguration config = new RestTemplateAutoConfiguration();
 		context.registerBean(RestTemplateBuilder.class,
-				() -> config.restTemplateBuilder());
+				() -> config.restTemplateBuilder(
+						context.getDefaultListableBeanFactory()
+								.getBeanProvider(HttpMessageConverters.class),
+						context.getDefaultListableBeanFactory().getBeanProvider(
+								ResolvableType.forClassWithGenerics(List.class,
+										RestTemplateCustomizer.class))));
 	}
 
 	private void registerWebClientAutoConfiguration() {

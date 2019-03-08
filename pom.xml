@@ -16,7 +16,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<spring-boot.version>2.1.2.RELEASE</spring-boot.version>
+		<spring-boot.version>2.2.0.BUILD-SNAPSHOT</spring-boot.version>
 		<thin.version>1.0.21.RELEASE</thin.version>
 	</properties>
 
@@ -57,6 +57,10 @@
 					<groupId>io.netty</groupId>
 					<artifactId>netty-codec-http2</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>jakarta.validation</groupId>
+					<artifactId>jakarta.validation-api</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -66,10 +70,6 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjweaver</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
