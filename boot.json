@@ -1,5 +1,10 @@
 [
     {
+		"name": "org.springframework.boot.logging.java.JavaLoggingSystem",
+		"allDeclaredConstructors": true,
+		"allPublicMethods": true
+	},
+	{
 		"name": "org.springframework.boot.autoconfigure.SharedMetadataReaderFactoryContextInitializer$SharedMetadataReaderFactoryBean",
 		"allDeclaredConstructors": true
 	},
