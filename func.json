@@ -51,41 +51,15 @@
 	},
 	{
 		"name": "org.springframework.boot.autoconfigure.web.reactive.error.ErrorWebFluxAutoConfiguration",
-		"methods": [
-			{
-				"name": "<init>",
-				"parameterTypes": [
-					"org.springframework.boot.autoconfigure.web.ServerProperties",
-					"org.springframework.boot.autoconfigure.web.ResourceProperties",
-					"org.springframework.beans.factory.ObjectProvider",
-					"org.springframework.http.codec.ServerCodecConfigurer",
-					"org.springframework.context.ApplicationContext"
-				]
-			}
-		]
+		"allDeclaredConstructors": true
 	},
 	{
 		"name": "org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration",
-		"methods": [
-			{
-				"name": "<init>",
-				"parameterTypes": [
-					"org.springframework.beans.factory.ObjectProvider"
-				]
-			}
-		]
+		"allDeclaredConstructors": true
 	},
 	{
 		"name": "org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration",
-		"methods": [
-			{
-				"name": "<init>",
-				"parameterTypes": [
-					"org.springframework.beans.factory.ObjectProvider",
-					"org.springframework.beans.factory.ObjectProvider"
-				]
-			}
-		]
+		"allDeclaredConstructors": true
 	},
 	{
 		"name": "org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration",

@@ -116,15 +116,6 @@
 		"allDeclaredConstructors": true
 	},
 	{
-		"name": "org.springframework.boot.diagnostics.analyzer.ValidationExceptionFailureAnalyzer",
-		"methods": [
-			{
-				"name": "<init>",
-				"parameterTypes": []
-			}
-		]
-	},
-	{
 		"name": "org.springframework.boot.diagnostics.analyzer.InvalidConfigurationPropertyNameFailureAnalyzer",
 		"allDeclaredConstructors": true
 	},
@@ -190,6 +181,22 @@
 	},
 	{
 		"name": "org.springframework.boot.autoconfigure.web.servlet.JspTemplateAvailabilityProvider",
+		"allDeclaredConstructors": true
+	},
+	{
+		"name": "org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor",
+		"allPublicMethods": true,
+		"allDeclaredMethods": true,
+		"allDeclaredConstructors": true
+	},
+	{
+		"name": "org.springframework.boot.context.properties.ConfigurationBeanFactoryMetadata",
+		"allDeclaredConstructors": true
+	},
+	{
+		"name": "org.springframework.boot.context.properties.ConfigurationPropertiesBinder",
+		"allPublicMethods": true,
+		"allDeclaredMethods": true,
 		"allDeclaredConstructors": true
 	}
 ]
