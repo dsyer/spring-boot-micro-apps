@@ -16,9 +16,9 @@
 
 package com.example.micro;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -34,16 +34,16 @@ public class MicroApplicationTests {
 
 	private ConfigurableApplicationContext context;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		context = new MicroApplication().run();
 		WebHandler webHandler = context.getBean(WebHandler.class);
 		client = WebTestClient.bindToWebHandler(webHandler).build();
 	}
 
-	@After
+	@AfterEach
 	public void close() {
-		if (context!=null) {
+		if (context != null) {
 			context.close();
 		}
 	}
@@ -52,4 +52,5 @@ public class MicroApplicationTests {
 	public void test() {
 		client.get().uri("/").exchange().expectBody(String.class).isEqualTo("Hello");
 	}
+
 }
