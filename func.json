@@ -135,9 +135,5 @@
 	{
 		"name": "com.example.config.ShutdownApplicationListener",
 		"allDeclaredConstructors": true
-	},
-	{
-		"name": "com.example.config.SpringBootBeanInfoFactory",
-		"allDeclaredConstructors": true
 	}
 ]

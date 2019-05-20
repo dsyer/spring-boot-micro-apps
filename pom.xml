@@ -25,6 +25,7 @@
 		<spring-boot.version>2.2.0.BUILD-SNAPSHOT</spring-boot.version>
 		<thin.version>1.0.21.RELEASE</thin.version>
 		<jmh.version>1.21</jmh.version>
+		<start-class>com.example.demo.DemoApplication</start-class>
 	</properties>
 
 	<dependencies>

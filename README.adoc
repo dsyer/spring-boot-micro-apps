@@ -45,6 +45,30 @@ The `thin.profile` could be empty (the default) for just `spring-boot-starter-we
 
 The apps are already systematically benchmarked here with regular JVMs: https://github.com/dsyer/spring-boot-startup-bench/blob/master/flux/README.adoc. The point of this project is just to extract them out of the JMH benchmarks, and make them easily executable as standalone apps. In the benchmarks, the "jack" profile is the default, and "jlog" is the faster reduced set of dependencies.
 
+== Benchmarks
+
+```
+class        method  sample  beans   classes  heap    memory  median  mean  range
+MainBenchmark  main  empt  24.000   3230.000  5.103  38.769  0.546  0.555  0.018
+MainBenchmark  main  jlog  80.000   3598.000  6.141  43.006  0.667  0.679  0.019
+MainBenchmark  main  demo  93.000   4365.000  8.024  49.564  0.766  0.773  0.011
+MainBenchmark  main  actr  174.000  5172.000  8.538  54.216  0.902  0.911  0.020
+MainBenchmark  main  jdbc  131.000  5261.000  9.174  55.252  0.883  0.902  0.031
+MainBenchmark  main  actj  214.000  5510.000  9.007  56.571  0.995  1.021  0.065
+```
+
+```
+class         method  sample  beans  classes  heap  memory  median  mean  range
+MiniBenchmark  boot   jlog  28.000  3336.000  7.082  41.949  0.588  0.597  0.014
+MiniBenchmark  boot   demo  28.000  4012.000  6.508  45.566  0.703  0.710  0.011
+MiniBenchmark  first  jlog  2.000   2176.000  6.556  38.574  0.416  0.418  0.004
+MiniBenchmark  first  demo  2.000   2913.000  5.647  42.091  0.515  0.523  0.008
+MiniBenchmark  micro  jlog  2.000   2176.000  4.608  32.886  0.336  0.345  0.013
+MiniBenchmark  micro  demo  2.000   2913.000  7.318  40.454  0.438  0.451  0.016
+MiniBenchmark  mini   jlog  27.000  3059.000  5.487  38.953  0.534  0.545  0.018
+MiniBenchmark  mini   demo  27.000  3732.000  5.969  43.726  0.631  0.636  0.007
+```
+
 == Building a Native Image
 
 The `MicroApplication` ought to be convertible to a native binary image using the Graal tools (the others, maybe not so easy because they all use Spring more heavily). The netty reflection configuration we need is probably the same as the https://medium.com/graalvm/instant-netty-startup-using-graalvm-native-image-generation-ed6f14ff7692[blog], so we copied that over (hence the extra jar that needs to be installed above).
