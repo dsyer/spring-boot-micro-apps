@@ -38,7 +38,7 @@ import reactor.core.publisher.Mono;
  * @author Dave Syer
  *
  */
-@SpringBootConfiguration
+@SpringBootConfiguration(proxyBeanMethods = false)
 @EnableWebFlux
 // @Import(LazyInitBeanFactoryPostProcessor.class)
 public class BootApplication {

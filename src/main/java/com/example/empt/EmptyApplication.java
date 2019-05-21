@@ -3,7 +3,7 @@ package com.example.empt;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
-@SpringBootApplication
+@SpringBootApplication(proxyBeanMethods = false)
 public class EmptyApplication {
 
 	public static void main(String[] args) throws Exception {
