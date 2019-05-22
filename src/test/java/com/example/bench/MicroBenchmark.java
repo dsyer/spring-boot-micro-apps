@@ -78,7 +78,7 @@ public class MicroBenchmark {
 
 		}
 
-		@Param // ("demo")
+		@Param({ "demo", "bunc", "func" })
 		private Sample sample;
 
 		public MainState() {

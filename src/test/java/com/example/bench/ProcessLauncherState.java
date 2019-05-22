@@ -73,6 +73,7 @@ public class ProcessLauncherState {
 
 	private static List<String> DEFAULT_JVM_ARGS = Arrays.asList("-Xmx128m", "-cp", "",
 			"-Djava.security.egd=file:/dev/./urandom", "-noverify",
+			"-Dspring.config.location=classpath:/application.properties",
 			"-Dspring.main.lazy-initialization=true",
 			"-Dspring.data.jpa.repositories.bootstrap-mode=lazy",
 			"-Dspring.cache.type=none", "-Dspring.jmx.enabled=false");
