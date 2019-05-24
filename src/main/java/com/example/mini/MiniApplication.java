@@ -33,9 +33,8 @@ import reactor.core.publisher.Mono;
  * @author Dave Syer
  *
  */
-@SpringBootConfiguration
+@SpringBootConfiguration(proxyBeanMethods = false)
 @EnableWebFlux
-// @Import(LazyInitBeanFactoryPostProcessor.class)
 public class MiniApplication {
 
 	public static void main(String[] args) throws Exception {

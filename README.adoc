@@ -71,11 +71,11 @@ MiniBenchmark  mini   demo  27.000  3732.000  5.969  43.726  0.631  0.636  0.007
 
 == Building a Native Image
 
-The `MicroApplication` ought to be convertible to a native binary image using the Graal tools (the others, maybe not so easy because they all use Spring more heavily). The netty reflection configuration we need is probably the same as the https://medium.com/graalvm/instant-netty-startup-using-graalvm-native-image-generation-ed6f14ff7692[blog], so we copied that over (hence the extra jar that needs to be installed above).
+All the apps are compilable to a native binary image using the Graal tools once you have Andy's https://github.com/aclement/spring-boot-graal-feature[Spring Boot Graal Feature library] - just clone it and `mvn install` it.
 
-Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it. You will need GraalVM 1.0.0-rc12 or later.
+Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it. You will need GraalVM 19.0.
 
-Compute the classpath using the `graal` profile so that we don't crash on missing JSR330 and jzlib classes:
+Compute the classpath using the `graal` profile so that we can work around some limitations of the Graal Features library:
 
 ```
 $ CP=`java -jar target/micro-0.0.1-SNAPSHOT.jar --thin.classpath --thin.profile=graal`
@@ -84,7 +84,7 @@ $ CP=`java -jar target/micro-0.0.1-SNAPSHOT.jar --thin.classpath --thin.profile=
 Then build an image:
 
 ```
-$ native-image -Dio.netty.noUnsafe=true -H:Name=target/micro -H:ReflectionConfigurationFiles=micro.json --report-unsupported-elements-at-runtime --allow-incomplete-classpath --delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder,org.springframework.core.io.VfsUtils,io.netty.handler.ssl.JdkNpnApplicationProtocolNegotiator,io.netty.handler.ssl.ReferenceCountedOpenSslEngine -cp $CP com.example.micro.MicroApplication
+$ native-image -Dio.netty.noUnsafe=true --no-server -H:Name=target/micro -H:+ReportExceptionStackTraces --no-fallback --allow-incomplete-classpath --report-unsupported-elements-at-runtime -cp target/classes:$CP:${HOME}/.m2/repository/org/springframework/spring-boot-graal-feature/0.5.0.BUILD-SNAPSHOT/spring-boot-graal-feature-0.5.0.BUILD-SNAPSHOT.jar com.example.micro.MicroApplication
 ```
 
 Then run it:
@@ -96,11 +96,11 @@ Started HttpServer: 2ms
 
 Excellent!
 
-You can do the same with `BuncApplication` (full Spring Boot, but manually configured):
+You can do the same with all the applications in this project, including `DemoApplication` (full Spring Boot):
 
 ```
-$ native-image -Dio.netty.noUnsafe=true -H:Name=target/bunc -Dio.netty.noUnsafe=true -Dio.netty.noJdkZlibDecoder=true -Dio.netty.noJdkZlibEncoder=true -H:ReflectionConfigurationFiles=func.json --report-unsupported-elements-at-runtime --allow-incomplete-classpath --delay-class-initialization-to-runtime=io.netty.handler.codec.http.HttpObjectEncoder,org.springframework.core.io.VfsUtils,io.netty.handler.ssl.JdkNpnApplicationProtocolNegotiator,io.netty.handler.ssl.ReferenceCountedOpenSslEngine -cp $CP com.example.func.BuncApplication
-$ ./target/bunc
+$ native-image -Dio.netty.noUnsafe=true --no-server -H:Name=target/demo -H:+ReportExceptionStackTraces --no-fallback --allow-incomplete-classpath --report-unsupported-elements-at-runtime -cp target/classes:$CP:${HOME}/.m2/repository/org/springframework/spring-boot-graal-feature/0.5.0.BUILD-SNAPSHOT/spring-boot-graal-feature-0.5.0.BUILD-SNAPSHOT.jar com.example.demo.DemoApplication
+$ ./target/demo
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -121,4 +121,6 @@ INFO: Started application in 0.036 seconds (JVM running for 0.04)
 Benchmark app started
 Started HttpServer: 40ms
 ```
+
+Note that whenever `@Configuration` is used, including in meta annotations like `@SpringBootApplication`, it must have the `proxyBeanMethods = false` flag set. CGLib is not friendly with GraalVM native images.
 
