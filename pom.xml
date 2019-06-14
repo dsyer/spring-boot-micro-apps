@@ -23,7 +23,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<spring-boot.version>2.2.0.M2</spring-boot.version>
-		<thin.version>1.0.21.RELEASE</thin.version>
+		<thin.version>1.0.22.RELEASE</thin.version>
 		<jmh.version>1.21</jmh.version>
 		<start-class>com.example.demo.DemoApplication</start-class>
 	</properties>

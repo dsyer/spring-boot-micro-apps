@@ -60,9 +60,7 @@ import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.GenericConverter;
-import org.springframework.core.serializer.support.SerializingConverter;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.codec.ServerCodecConfigurer;
@@ -178,7 +176,6 @@ public class FuncApplication implements Runnable, Closeable,
 			performPreinitialization();
 		}
 		context.registerBean(AutowiredAnnotationBeanPostProcessor.class);
-		// registerConverters();
 		registerDemoApplication();
 		registerWebServerFactoryCustomizerBeanPostProcessor();
 		registerConfigurationProperties();
@@ -192,13 +189,6 @@ public class FuncApplication implements Runnable, Closeable,
 		registerHttpMessageConvertersAutoConfiguration();
 		registerReactorCoreAutoConfiguration();
 		registerWebClientAutoConfiguration();
-	}
-
-	private void registerConverters() {
-		// Graal needs this?
-		context.registerBean(Converter.class, () -> new SerializingConverter());
-		context.registerBean(GenericConverter.class, () -> new DummyGenericConverter());
-		context.registerBean(WebFilter.class, () -> new DummyWebFilter());
 	}
 
 	static class DummyWebFilter implements WebFilter {
