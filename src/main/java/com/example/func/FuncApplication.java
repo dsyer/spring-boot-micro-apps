@@ -15,10 +15,8 @@ import com.example.config.BeanCountingApplicationListener;
 import com.example.config.LazyInitBeanFactoryPostProcessor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 
@@ -35,7 +33,6 @@ import org.springframework.boot.autoconfigure.http.HttpProperties;
 import org.springframework.boot.autoconfigure.reactor.core.ReactorCoreProperties;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.ReactiveWebServerFactoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.ReactiveWebServerFactoryCustomizer;
 import org.springframework.boot.autoconfigure.web.reactive.ResourceHandlerRegistrationCustomizer;
@@ -46,8 +43,6 @@ import org.springframework.boot.autoconfigure.web.reactive.WebFluxRegistrations;
 import org.springframework.boot.autoconfigure.web.reactive.error.ErrorWebFluxAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessorRegistrar;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.boot.web.codec.CodecCustomizer;
 import org.springframework.boot.web.embedded.netty.NettyReactiveWebServerFactory;
 import org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext;
@@ -183,7 +178,7 @@ public class FuncApplication implements Runnable, Closeable,
 			performPreinitialization();
 		}
 		context.registerBean(AutowiredAnnotationBeanPostProcessor.class);
-		registerConverters();
+		// registerConverters();
 		registerDemoApplication();
 		registerWebServerFactoryCustomizerBeanPostProcessor();
 		registerConfigurationProperties();
@@ -196,7 +191,6 @@ public class FuncApplication implements Runnable, Closeable,
 		registerGsonAutoConfiguration();
 		registerHttpMessageConvertersAutoConfiguration();
 		registerReactorCoreAutoConfiguration();
-		registerRestTemplateAutoConfiguration();
 		registerWebClientAutoConfiguration();
 	}
 
@@ -433,17 +427,6 @@ public class FuncApplication implements Runnable, Closeable,
 	private void registerReactorCoreAutoConfiguration() {
 		context.registerBean(ReactorConfiguration.class,
 				() -> new ReactorConfiguration());
-	}
-
-	private void registerRestTemplateAutoConfiguration() {
-		RestTemplateAutoConfiguration config = new RestTemplateAutoConfiguration();
-		context.registerBean(RestTemplateBuilder.class,
-				() -> config.restTemplateBuilder(
-						context.getDefaultListableBeanFactory()
-								.getBeanProvider(HttpMessageConverters.class),
-						context.getDefaultListableBeanFactory().getBeanProvider(
-								ResolvableType.forClassWithGenerics(List.class,
-										RestTemplateCustomizer.class))));
 	}
 
 	private void registerWebClientAutoConfiguration() {
