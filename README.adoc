@@ -47,6 +47,21 @@ The apps are already systematically benchmarked here with regular JVMs: https://
 
 == Benchmarks
 
+Latest Boot snapshots after 2.2.0.M4:
+
+```
+class         method  sample  beans  classes   heap  memory  median  mean  range
+MicroBenchmark  main  empt  29.000  3272.000  6.388  36.948  0.461  0.491  0.051
+MicroBenchmark  main  micro  6.000  3135.000  6.554  37.536  0.296  0.301  0.007
+MicroBenchmark  main  mini  27.000  3697.000  6.546  40.860  0.426  0.438  0.011
+MicroBenchmark  main  func  45.000  3317.000  6.955  39.155  0.427  0.438  0.022
+MicroBenchmark  main  bunc  46.000  3922.000  6.745  42.758  0.471  0.482  0.011
+MicroBenchmark  main  cunc  52.000  4082.000  5.819  42.736  0.510  0.524  0.029
+MicroBenchmark  main  demo  96.000  4632.000  7.120  47.307  0.712  0.738  0.060
+```
+
+Earlier results:
+
 ```
 class        method  sample  beans   classes  heap    memory  median  mean  range
 MainBenchmark  main  empt  24.000   3230.000  5.103  38.769  0.546  0.555  0.018

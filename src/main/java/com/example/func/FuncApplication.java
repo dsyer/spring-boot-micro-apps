@@ -11,17 +11,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.example.config.BeanCountingApplicationListener;
 import com.example.config.LazyInitBeanFactoryPostProcessor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -30,7 +27,6 @@ import org.springframework.boot.autoconfigure.gson.GsonBuilderCustomizer;
 import org.springframework.boot.autoconfigure.gson.GsonProperties;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.http.HttpProperties;
-import org.springframework.boot.autoconfigure.reactor.core.ReactorCoreProperties;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.reactive.ReactiveWebServerFactoryAutoConfiguration;
@@ -164,7 +160,6 @@ public class FuncApplication implements Runnable, Closeable,
 		context.refresh();
 		log(context);
 		System.err.println(MARKER);
-		new BeanCountingApplicationListener().log(context);
 	}
 
 	@Override
@@ -187,7 +182,6 @@ public class FuncApplication implements Runnable, Closeable,
 		registerHttpHandlerAutoConfiguration();
 		registerGsonAutoConfiguration();
 		registerHttpMessageConvertersAutoConfiguration();
-		registerReactorCoreAutoConfiguration();
 		registerWebClientAutoConfiguration();
 	}
 
@@ -248,8 +242,6 @@ public class FuncApplication implements Runnable, Closeable,
 		context.registerBean(WebFluxProperties.class, () -> new WebFluxProperties());
 		context.registerBean(GsonProperties.class, () -> new GsonProperties());
 		context.registerBean(HttpProperties.class, () -> new HttpProperties());
-		context.registerBean(ReactorCoreProperties.class,
-				() -> new ReactorCoreProperties());
 	}
 
 	private void registerWebServerFactoryCustomizerBeanPostProcessor() {
@@ -414,11 +406,6 @@ public class FuncApplication implements Runnable, Closeable,
 		return converter;
 	}
 
-	private void registerReactorCoreAutoConfiguration() {
-		context.registerBean(ReactorConfiguration.class,
-				() -> new ReactorConfiguration());
-	}
-
 	private void registerWebClientAutoConfiguration() {
 		context.registerBean(WebClient.Builder.class, () -> {
 			WebClientAutoConfiguration config = new WebClientAutoConfiguration(
@@ -430,16 +417,6 @@ public class FuncApplication implements Runnable, Closeable,
 
 }
 
-class ReactorConfiguration {
-
-	@Autowired
-	protected void initialize(ReactorCoreProperties properties) {
-		if (properties.getStacktraceMode().isEnabled()) {
-			Hooks.onOperatorDebug();
-		}
-	}
-
-}
 
 class EnableWebFluxConfigurationWrapper extends EnableWebFluxConfiguration {
 
