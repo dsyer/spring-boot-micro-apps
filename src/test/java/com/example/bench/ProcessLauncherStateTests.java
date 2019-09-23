@@ -16,10 +16,12 @@
 
 package com.example.bench;
 
-import com.example.bench.CaptureSystemOutput.OutputCapture;
-import com.example.func.FuncApplication;
+import com.example.reactor.ReactorApplication;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,16 +29,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Dave Syer
  *
  */
+@ExtendWith(OutputCaptureExtension.class)
 public class ProcessLauncherStateTests {
 
 	@Test
-	@CaptureSystemOutput
-	public void vanilla(OutputCapture output) throws Exception {
+	public void vanilla(CapturedOutput output) throws Exception {
 		// System.setProperty("bench.args",
 		// "-agentlib:jdwp=transport=dt_socket,server=y,address=8000");
 		System.setProperty("debug", "true");
 		ProcessLauncherState state = new ProcessLauncherState("target");
-		state.setMainClass(FuncApplication.class.getName());
+		state.setMainClass(ReactorApplication.class.getName());
 		state.before();
 		state.run();
 		state.after();

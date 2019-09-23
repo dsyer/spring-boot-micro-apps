@@ -22,6 +22,7 @@ import com.example.func.CuncApplication;
 import com.example.func.FuncApplication;
 import com.example.micro.MicroApplication;
 import com.example.mini.MiniApplication;
+import com.example.reactor.ReactorApplication;
 
 import org.openjdk.jmh.annotations.AuxCounters;
 import org.openjdk.jmh.annotations.AuxCounters.Type;
@@ -58,7 +59,7 @@ public class MicroBenchmark {
 
 		public static enum Sample {
 
-			empt(EmptyApplication.class), micro(MicroApplication.class), mini(
+			empt(EmptyApplication.class), react(ReactorApplication.class), micro(MicroApplication.class), mini(
 					MiniApplication.class), func(FuncApplication.class), bunc(
 							BuncApplication.class), cunc(CuncApplication.class), demo;
 
@@ -78,7 +79,7 @@ public class MicroBenchmark {
 
 		}
 
-		@Param // ({ "demo", "bunc", "func" })
+		@Param // ({ "demo", "react", "bunc", "func" })
 		private Sample sample;
 
 		public MainState() {
