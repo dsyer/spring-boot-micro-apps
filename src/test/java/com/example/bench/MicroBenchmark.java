@@ -24,6 +24,7 @@ import com.example.micro.MicroApplication;
 import com.example.mini.MiniApplication;
 import com.example.reactor.ReactorApplication;
 
+import org.junit.platform.commons.annotation.Testable;
 import org.openjdk.jmh.annotations.AuxCounters;
 import org.openjdk.jmh.annotations.AuxCounters.Type;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -49,6 +50,7 @@ import jmh.mbr.junit5.Microbenchmark;
 public class MicroBenchmark {
 
 	@Benchmark
+	@Testable
 	public void main(MainState state) throws Exception {
 		state.run();
 	}

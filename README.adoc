@@ -86,7 +86,7 @@ MiniBenchmark  mini   demo  27.000  3732.000  5.969  43.726  0.631  0.636  0.007
 
 == Building a Native Image
 
-All the apps are compilable to a native binary image using the Graal tools once you have Andy's https://github.com/aclement/spring-boot-graal-feature[Spring Boot Graal Feature library] - just clone it and `mvn install` it.
+All the apps are compilable to a native binary image using the Graal tools once you have Andy's https://github.com/spring-projects-experimental/spring-graal-feature[Spring Graal Feature library] - just clone it and `mvn install` it.
 
 Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it. You will need GraalVM 19.0.
 
@@ -99,7 +99,7 @@ $ CP=`java -jar target/micro-0.0.1-SNAPSHOT.jar --thin.classpath --thin.profile=
 Then build an image:
 
 ```
-$ native-image -Dio.netty.noUnsafe=true --no-server -H:Name=target/micro -H:+ReportExceptionStackTraces --no-fallback --allow-incomplete-classpath --report-unsupported-elements-at-runtime -cp target/classes:$CP:${HOME}/.m2/repository/org/springframework/spring-boot-graal-feature/0.5.0.BUILD-SNAPSHOT/spring-boot-graal-feature-0.5.0.BUILD-SNAPSHOT.jar com.example.micro.MicroApplication
+$ native-image -Dio.netty.noUnsafe=true --no-server -H:Name=target/micro -H:+ReportExceptionStackTraces --no-fallback --allow-incomplete-classpath --report-unsupported-elements-at-runtime -cp $CP com.example.micro.MicroApplication
 ```
 
 Then run it:
@@ -114,7 +114,7 @@ Excellent!
 You can do the same with all the applications in this project, including `DemoApplication` (full Spring Boot):
 
 ```
-$ native-image -Dio.netty.noUnsafe=true --no-server -H:Name=target/demo -H:+ReportExceptionStackTraces --no-fallback --allow-incomplete-classpath --report-unsupported-elements-at-runtime -cp target/classes:$CP:${HOME}/.m2/repository/org/springframework/spring-boot-graal-feature/0.5.0.BUILD-SNAPSHOT/spring-boot-graal-feature-0.5.0.BUILD-SNAPSHOT.jar com.example.demo.DemoApplication
+$ native-image -Dio.netty.noUnsafe=true --no-server -H:Name=target/demo -H:+ReportExceptionStackTraces --no-fallback --allow-incomplete-classpath --report-unsupported-elements-at-runtime -cp $CP com.example.demo.DemoApplication
 $ ./target/demo
 
   .   ____          _            __ _ _
