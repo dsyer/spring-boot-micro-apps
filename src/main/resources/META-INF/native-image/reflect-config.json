@@ -1,6 +1,7 @@
 [
   {
     "name": "com.example.demo.DemoApplication",
-    "allDeclaredConstructors": true
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
  }
 ]
