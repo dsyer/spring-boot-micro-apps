@@ -12,7 +12,6 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 import reactor.core.publisher.Mono;
 
 @SpringBootApplication(proxyBeanMethods = false)
-// @Import(LazyInitBeanFactoryPostProcessor.class)
 public class DemoApplication {
 
 	@Bean
