@@ -32,12 +32,14 @@ INFO: Started HttpServer on /127.0.0.1:8080
 The main class could be one of 
 
 |===
-| Main                               | Description |
-| com.example.demo.DemoApplication   | (The default). Spring Boot with Webflux and full autoconfiguration |
-| com.example.boot.BootApplication   | Spring Boot with Webflux and `RouterFunction` but no autoconfiguration |
-| com.example.func.BuncApplication   | Spring Boot with Webflux and `RouterFunction` using manual functional bean registration |
-| com.example.mini.MiniApplication   | Raw Spring, no autoconfiguration, but using `@Configuration` and `RouterFunction` |
-| com.example.micro.MicroApplication | Raw Spring with no `@Configuration`       |
+| Main                                | Description |
+| com.example.demo.DemoApplication    | (The default). Spring Boot with Webflux and full autoconfiguration |
+| com.example.manual.ManualApplication| Spring Boot with Webflux but manually importing autoconfiguration using `@ImportAutoConfiguration` |
+| com.example.boot.BootApplication    | Spring Boot with Webflux and `RouterFunction` but no autoconfiguration |
+| com.example.func.FuncApplication    | Spring (not Boot) with Webflux and `RouterFunction` using manual functional bean registration |
+| com.example.func.BuncApplication    | Spring Boot with Webflux and `RouterFunction` using manual functional bean registration |
+| com.example.mini.MiniApplication    | Raw Spring, no autoconfiguration, but using `@Configuration` and `RouterFunction` |
+| com.example.micro.MicroApplication  | Raw Spring with no `@Configuration`       |
 
 |===
 
@@ -47,7 +49,27 @@ The apps are already systematically benchmarked here with regular JVMs: https://
 
 == Benchmarks
 
-Latest Boot snapshots after 2.2.0.M4:
+Spring Boot 2.2.1:
+
+```
+class           method  sample beans  classes    heap  memory  median  mean  range
+MicroBenchmark    main  react ≈ 0     2166.000  5.897  30.746  0.219  0.224  0.007
+MicroBenchmark    main  empt  32.000  3269.000  6.366  36.951  0.469  0.481  0.015
+MicroBenchmark    main  micro 6.000   3156.000  6.638  37.913  0.305  0.312  0.008
+MicroBenchmark    main  mini  27.000  3734.000  6.660  41.262  0.444  0.450  0.008
+MicroBenchmark    main  func  45.000  3298.000  6.870  39.068  0.435  0.444  0.012
+MicroBenchmark    main  bunc  46.000  3915.000  6.806  42.849  0.503  0.537  0.040
+MicroBenchmark    main  cunc  52.000  4101.000  5.868  42.908  0.529  0.577  0.054
+MicroBenchmark    main  boot  28.000  4043.000  6.012  42.109  0.387  0.395  0.011
+MicroBenchmark    main  manl  53.000  4231.000  6.105  43.980  0.574  0.583  0.011
+MicroBenchmark    main  demo  100.000 4671.000  7.352  47.825  0.731  0.756  0.031
+ProfileBenchmark  main  jack  98.000  5431.000  9.899  54.039  0.778  0.795  0.015
+ProfileBenchmark  main  actr  188.000 5704.000  9.418  55.329  0.945  0.957  0.014
+ProfileBenchmark  main  jdbc  138.000 5625.000  8.262  53.747  0.880  0.980  0.137
+ProfileBenchmark  main  actj  228.000 5884.000  10.758 57.704  1.030  1.142  0.116
+```
+
+Snapshots after 2.2.0.M4:
 
 ```
 class         method  sample  beans  classes   heap  memory  median  mean  range
@@ -90,7 +112,8 @@ All the apps are compilable to a native binary image using the Graal tools once 
 
 Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it. You will need GraalVM 19.0.
 
-Compute the classpath using the `graal` profile so that we can work around some limitations of the Graal Features library:
+Compute the classpath using the `graal` profile so that we can work around some limitations{blank}footnote:[Log4j with java.util logging doesn't work at the moment.
+] of the Graal Features library:
 
 ```
 $ CP=`java -jar target/micro-0.0.1-SNAPSHOT.jar --thin.classpath --thin.profile=graal`

@@ -38,7 +38,7 @@ import org.springframework.boot.autoconfigure.web.reactive.WebFluxProperties;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxRegistrations;
 import org.springframework.boot.autoconfigure.web.reactive.error.ErrorWebFluxAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
-import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessorRegistrar;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.boot.web.codec.CodecCustomizer;
 import org.springframework.boot.web.embedded.netty.NettyReactiveWebServerFactory;
 import org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext;
@@ -235,8 +235,7 @@ public class FuncApplication implements Runnable, Closeable,
 	}
 
 	private void registerConfigurationProperties() {
-		new ConfigurationPropertiesBindingPostProcessorRegistrar()
-				.registerBeanDefinitions(null, context);
+		ConfigurationPropertiesBindingPostProcessor.register(context);
 		context.registerBean(ServerProperties.class, () -> new ServerProperties());
 		context.registerBean(ResourceProperties.class, () -> new ResourceProperties());
 		context.registerBean(WebFluxProperties.class, () -> new WebFluxProperties());
@@ -416,7 +415,6 @@ public class FuncApplication implements Runnable, Closeable,
 	}
 
 }
-
 
 class EnableWebFluxConfigurationWrapper extends EnableWebFluxConfiguration {
 

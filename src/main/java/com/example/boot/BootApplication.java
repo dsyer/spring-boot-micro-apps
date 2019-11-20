@@ -18,6 +18,7 @@ package com.example.boot;
 import java.util.Collections;
 
 import com.example.config.ApplicationBuilder;
+import reactor.core.publisher.Mono;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.WebApplicationType;
@@ -31,8 +32,6 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
-
-import reactor.core.publisher.Mono;
 
 /**
  * @author Dave Syer

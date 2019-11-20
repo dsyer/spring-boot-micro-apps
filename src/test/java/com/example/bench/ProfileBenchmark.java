@@ -15,16 +15,8 @@
  */
 package com.example.bench;
 
-import com.example.boot.BootApplication;
 import com.example.demo.DemoApplication;
 import com.example.empt.EmptyApplication;
-import com.example.func.BuncApplication;
-import com.example.func.CuncApplication;
-import com.example.func.FuncApplication;
-import com.example.manual.ManualApplication;
-import com.example.micro.MicroApplication;
-import com.example.mini.MiniApplication;
-import com.example.reactor.ReactorApplication;
 import jmh.mbr.junit5.Microbenchmark;
 import org.junit.platform.commons.annotation.Testable;
 import org.openjdk.jmh.annotations.AuxCounters;
@@ -47,7 +39,7 @@ import org.openjdk.jmh.annotations.Warmup;
 @Fork(value = 2, warmups = 0)
 @BenchmarkMode(Mode.AverageTime)
 @Microbenchmark
-public class MicroBenchmark {
+public class ProfileBenchmark {
 
 	@Benchmark
 	@Testable
@@ -61,12 +53,7 @@ public class MicroBenchmark {
 
 		public static enum Sample {
 
-			empt(EmptyApplication.class), react(ReactorApplication.class), micro(
-					MicroApplication.class), mini(MiniApplication.class), func(
-							FuncApplication.class), bunc(BuncApplication.class), cunc(
-									CuncApplication.class), boot(
-											BootApplication.class), manl(
-													ManualApplication.class), demo;
+			empt(EmptyApplication.class), demo, jack, actr, jdbc, actj;
 
 			private Class<?> config;
 
@@ -84,7 +71,7 @@ public class MicroBenchmark {
 
 		}
 
-		@Param("demo") // ({ "demo", "react", "bunc", "func" })
+		@Param
 		private Sample sample;
 
 		public MainState() {
