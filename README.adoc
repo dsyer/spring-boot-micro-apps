@@ -1,6 +1,8 @@
 [.lead]
 This project shows how to build "micro" applications with Spring and Spring Boot - the smallest, functional units, with the fewest dependencies and fastest start times
 
+image::https://gitpod.io/button/open-in-gitpod.svg[Open in Gitpod,link="https://gitpod.io/#https://github.com/dsyer/spring-boot-micro-apps"]
+
 == Building the Apps
 
 Build the jar:
