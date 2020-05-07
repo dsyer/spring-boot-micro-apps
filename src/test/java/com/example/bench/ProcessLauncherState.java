@@ -73,10 +73,9 @@ public class ProcessLauncherState {
 
 	private static List<String> DEFAULT_JVM_ARGS = Arrays.asList("-Xmx128m", "-cp", "",
 			"-Djava.security.egd=file:/dev/./urandom", "-noverify",
-			"-Dspring.config.location=classpath:/application.properties",
-			"-Dspring.main.lazy-initialization=true",
-			"-Dspring.data.jpa.repositories.bootstrap-mode=lazy",
-			"-Dspring.cache.type=none", "-Dspring.jmx.enabled=false");
+			"-Dspring.config.location=classpath:/application.properties", "-Dspring.main.lazy-initialization=true",
+			"-Dspring.data.jpa.repositories.bootstrap-mode=lazy", "-Dspring.cache.type=none",
+			"-Dspring.jmx.enabled=false");
 
 	private File home;
 
@@ -118,8 +117,7 @@ public class ProcessLauncherState {
 		this.args.addAll(DEFAULT_JVM_ARGS);
 		String vendor = System.getProperty("java.vendor", "").toLowerCase();
 		if (vendor.contains("ibm") || vendor.contains("j9")) {
-			this.args.addAll(Arrays.asList("-Xms32m", "-Xquickstart", "-Xshareclasses",
-					"-Xscmx128m"));
+			this.args.addAll(Arrays.asList("-Xms32m", "-Xquickstart", "-Xshareclasses", "-Xscmx128m"));
 		}
 		else {
 			this.args.addAll(Arrays.asList("-XX:TieredStopAtLevel=1"));
@@ -147,14 +145,28 @@ public class ProcessLauncherState {
 		this.args.addAll(Arrays.asList(args));
 	}
 
-	private String getClasspath() {
+	protected String getClasspath() {
+		return getClasspath(true);
+	}
+
+	protected String getClasspath(boolean includeTargetClasses) {
 		PathResolver resolver = new PathResolver(DependencyResolver.instance());
 		Archive root = ArchiveUtils.getArchive(ProcessLauncherState.class);
 		List<Archive> resolved = resolver.resolve(root, name, profiles);
-		File app = new File("target/classes");
-		StringBuilder builder = new StringBuilder(app.getAbsolutePath());
-		app = new File("target/test-classes");
-		builder.append(File.pathSeparator).append(app.getAbsolutePath());
+		StringBuilder builder = new StringBuilder();
+		if (includeTargetClasses) {
+			File app = new File("target/classes");
+			builder.append(app.getAbsolutePath());
+			app = new File("target/test-classes");
+			builder.append(File.pathSeparator).append(app.getAbsolutePath());
+		}
+		else {
+			File path = new File("target/micro-0.0.1-SNAPSHOT.jar");
+			if (!path.exists()) {
+				throw new IllegalStateException("Cannot find jar file: " + path);
+			}
+			builder.append(path.getAbsolutePath());
+		}
 		try {
 			for (Archive archive : resolved) {
 				if (archive.getUrl().equals(root.getUrl())) {
@@ -207,9 +219,10 @@ public class ProcessLauncherState {
 			Map<String, Long> metrics = VirtualMachineMetrics.fetch(getPid());
 			this.memory = VirtualMachineMetrics.total(metrics);
 			this.heap = VirtualMachineMetrics.heap(metrics);
-			this.classes = metrics.get("Classes").intValue();
-			System.out.println(
-					"Stopped " + mainClass + ": " + started.destroyForcibly().waitFor());
+			if (metrics.containsKey("Classes")) {
+				this.classes = metrics.get("Classes").intValue();
+			}
+			System.out.println("Stopped " + mainClass + ": " + started.destroyForcibly().waitFor());
 		}
 	}
 
@@ -293,12 +306,10 @@ public class ProcessLauncherState {
 				System.out.println(line);
 			}
 			if (line.contains(CLASS_COUNT_MARKER)) {
-				classes = Integer
-						.valueOf(line.substring(line.lastIndexOf("=") + 1).trim());
+				classes = Integer.valueOf(line.substring(line.lastIndexOf("=") + 1).trim());
 			}
 			if (line.contains(BEAN_COUNT_MARKER)) {
-				int count = Integer
-						.valueOf(line.substring(line.lastIndexOf("=") + 1).trim());
+				int count = Integer.valueOf(line.substring(line.lastIndexOf("=") + 1).trim());
 				beans = count > beans ? count : beans;
 			}
 			line = null;
@@ -317,8 +328,7 @@ public class ProcessLauncherState {
 
 }
 
-class StartupApplicationListener
-		implements ApplicationListener<ApplicationReadyEvent>, ApplicationContextAware {
+class StartupApplicationListener implements ApplicationListener<ApplicationReadyEvent>, ApplicationContextAware {
 
 	public static final String MARKER = "Benchmark app started";
 
@@ -347,8 +357,7 @@ class StartupApplicationListener
 
 	private boolean isSpringBootApplication(Set<Class<?>> sources) {
 		for (Class<?> source : sources) {
-			if (AnnotatedElementUtils.hasAnnotation(source,
-					SpringBootConfiguration.class)) {
+			if (AnnotatedElementUtils.hasAnnotation(source, SpringBootConfiguration.class)) {
 				return true;
 			}
 		}
@@ -356,15 +365,13 @@ class StartupApplicationListener
 	}
 
 	private Set<Class<?>> sources(ApplicationReadyEvent event) {
-		Method method = ReflectionUtils.findMethod(SpringApplication.class,
-				"getAllSources");
+		Method method = ReflectionUtils.findMethod(SpringApplication.class, "getAllSources");
 		if (method == null) {
 			method = ReflectionUtils.findMethod(SpringApplication.class, "getSources");
 		}
 		ReflectionUtils.makeAccessible(method);
 		@SuppressWarnings("unchecked")
-		Set<Object> objects = (Set<Object>) ReflectionUtils.invokeMethod(method,
-				event.getSpringApplication());
+		Set<Object> objects = (Set<Object>) ReflectionUtils.invokeMethod(method, event.getSpringApplication());
 		Set<Class<?>> result = new LinkedHashSet<>();
 		for (Object object : objects) {
 			if (object instanceof String) {
@@ -378,8 +385,8 @@ class StartupApplicationListener
 }
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
-class ShutdownApplicationListener implements ApplicationListener<ApplicationReadyEvent>,
-		DisposableBean, ApplicationContextAware {
+class ShutdownApplicationListener
+		implements ApplicationListener<ApplicationReadyEvent>, DisposableBean, ApplicationContextAware {
 
 	private static final String SHUTDOWN_LISTENER = "SHUTDOWN_LISTENER";
 
@@ -414,8 +421,7 @@ class ShutdownApplicationListener implements ApplicationListener<ApplicationRead
 
 	private boolean isSpringBootApplication(Set<Class<?>> sources) {
 		for (Class<?> source : sources) {
-			if (AnnotatedElementUtils.hasAnnotation(source,
-					SpringBootConfiguration.class)) {
+			if (AnnotatedElementUtils.hasAnnotation(source, SpringBootConfiguration.class)) {
 				return true;
 			}
 		}
@@ -423,15 +429,13 @@ class ShutdownApplicationListener implements ApplicationListener<ApplicationRead
 	}
 
 	private Set<Class<?>> sources(ApplicationReadyEvent event) {
-		Method method = ReflectionUtils.findMethod(SpringApplication.class,
-				"getAllSources");
+		Method method = ReflectionUtils.findMethod(SpringApplication.class, "getAllSources");
 		if (method == null) {
 			method = ReflectionUtils.findMethod(SpringApplication.class, "getSources");
 		}
 		ReflectionUtils.makeAccessible(method);
 		@SuppressWarnings("unchecked")
-		Set<Object> objects = (Set<Object>) ReflectionUtils.invokeMethod(method,
-				event.getSpringApplication());
+		Set<Object> objects = (Set<Object>) ReflectionUtils.invokeMethod(method, event.getSpringApplication());
 		Set<Class<?>> result = new LinkedHashSet<>();
 		for (Object object : objects) {
 			if (object instanceof String) {
@@ -444,8 +448,7 @@ class ShutdownApplicationListener implements ApplicationListener<ApplicationRead
 
 }
 
-class BeanCountingApplicationListener
-		implements ApplicationListener<ApplicationReadyEvent>, ApplicationContextAware {
+class BeanCountingApplicationListener implements ApplicationListener<ApplicationReadyEvent>, ApplicationContextAware {
 
 	private static Log logger = LogFactory.getLog(BeanCountingApplicationListener.class);
 
@@ -477,8 +480,8 @@ class BeanCountingApplicationListener
 		logger.info("Bean count: " + id + "=" + count);
 		logger.debug("Bean names: " + id + "=" + names);
 		try {
-			logger.info("Class count: " + id + "=" + ManagementFactory
-					.getClassLoadingMXBean().getTotalLoadedClassCount());
+			logger.info(
+					"Class count: " + id + "=" + ManagementFactory.getClassLoadingMXBean().getTotalLoadedClassCount());
 		}
 		catch (Exception e) {
 		}

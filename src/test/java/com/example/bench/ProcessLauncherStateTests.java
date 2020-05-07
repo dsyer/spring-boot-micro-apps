@@ -16,10 +16,14 @@
 
 package com.example.bench;
 
+import com.example.bench.CdsBenchmark.CdsState;
+import com.example.bench.CdsBenchmark.CdsState.Sample;
 import com.example.reactor.ReactorApplication;
-
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 
@@ -44,6 +48,19 @@ public class ProcessLauncherStateTests {
 		state.after();
 		assertThat(output.toString()).contains("Benchmark app started");
 		assertThat(state.getHeap()).isGreaterThan(0);
+	}
+
+	@Test
+	@EnabledOnJre({ JRE.JAVA_11, JRE.JAVA_14 })
+	public void cds(CapturedOutput output) throws Exception {
+		CdsState state = new CdsState();
+		state.sample = Sample.demo;
+		// state.addArgs("-Ddebug=true");
+		state.start();
+		state.run();
+		state.after();
+		assertThat(output.toString()).contains("Netty started");
+		assertThat(output.toString()).contains("Benchmark app started");
 	}
 
 }

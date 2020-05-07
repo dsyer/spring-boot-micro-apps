@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,18 +15,15 @@
  */
 package com.example.bench;
 
-import com.example.boot.BootApplication;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
+
 import com.example.demo.DemoApplication;
 import com.example.empt.EmptyApplication;
-import com.example.func.BuncApplication;
-import com.example.func.CuncApplication;
-import com.example.func.FuncApplication;
 import com.example.manual.ManualApplication;
-import com.example.micro.MicroApplication;
-import com.example.mini.MiniApplication;
-import com.example.reactor.ReactorApplication;
 import jmh.mbr.junit5.Microbenchmark;
-import org.junit.platform.commons.annotation.Testable;
 import org.openjdk.jmh.annotations.AuxCounters;
 import org.openjdk.jmh.annotations.AuxCounters.Type;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -41,29 +38,28 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.util.FileUtils;
 
 @Measurement(iterations = 5, time = 1)
 @Warmup(iterations = 1, time = 1)
 @Fork(value = 2, warmups = 0)
 @BenchmarkMode(Mode.AverageTime)
 @Microbenchmark
-public class MicroBenchmark {
+public class CdsBenchmark {
 
 	@Benchmark
-	@Testable
-	public void main(MainState state) throws Exception {
+	public void main(CdsState state) throws Exception {
 		state.run();
 	}
 
 	@State(Scope.Thread)
 	@AuxCounters(Type.EVENTS)
-	public static class MainState extends ProcessLauncherState {
+	public static class CdsState extends ProcessLauncherState {
 
 		public static enum Sample {
 
-			empt(EmptyApplication.class), react(ReactorApplication.class), micro(MicroApplication.class), mini(
-					MiniApplication.class), func(FuncApplication.class), bunc(BuncApplication.class), cunc(
-							CuncApplication.class), boot(BootApplication.class), manl(ManualApplication.class), demo;
+			empt(EmptyApplication.class), //
+			manl(ManualApplication.class), demo;
 
 			private Class<?> config;
 
@@ -81,12 +77,10 @@ public class MicroBenchmark {
 
 		}
 
-		@Param({ "empt", "demo", "manl" })
-		private Sample sample;
+		private static final String APP_JSA = "app.jsa";
 
-		public MainState() {
-			super("target");
-		}
+		@Param // ({ "demo"})
+		Sample sample = Sample.demo;
 
 		@Override
 		public int getClasses() {
@@ -108,6 +102,17 @@ public class MicroBenchmark {
 			return super.getHeap();
 		}
 
+		public CdsState() {
+			super("target", "--server.port=0");
+		}
+
+		@Override
+		protected void customize(List<String> args) {
+			args.addAll(Arrays.asList("-Xshare:on", // "-XX:+UseAppCDS",
+					"-XX:SharedArchiveFile=" + APP_JSA));
+			super.customize(args);
+		}
+
 		@TearDown(Level.Invocation)
 		public void stop() throws Exception {
 			super.after();
@@ -118,8 +123,22 @@ public class MicroBenchmark {
 			if (sample != Sample.demo) {
 				setProfiles(sample.toString());
 			}
-			super.before();
 			setMainClass(sample.getConfig().getName());
+			Process started = exec(new String[] { "-Xshare:off", // "-XX:+UseAppCDS",
+					"-XX:DumpLoadedClassList=app.classlist", "-cp", "" }, "--server.port=0");
+			output(new BufferedReader(new InputStreamReader(started.getInputStream())), "Started");
+			started.destroyForcibly();
+			Process dump = exec(new String[] { "-Xshare:dump", // "-XX:+UseAppCDS",
+					"-XX:SharedClassListFile=app.classlist", "-XX:SharedArchiveFile=" + APP_JSA, "-cp", "" });
+			System.err.println(FileUtils.readAllLines(dump.getInputStream()));
+			dump.waitFor();
+			System.err.println("Finished dumping class data");
+			super.before();
+		}
+
+		@Override
+		protected String getClasspath() {
+			return getClasspath(false);
 		}
 
 	}
