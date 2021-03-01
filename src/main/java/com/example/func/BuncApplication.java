@@ -51,7 +51,8 @@ public class BuncApplication extends FuncApplication {
 		application.setRegisterShutdownHook(false);
 		application.setDefaultProperties(Collections.singletonMap("boot.active", "true"));
 		application.addInitializers(this);
-		application.setApplicationContextClass(ReactiveWebServerApplicationContext.class);
+		application.setApplicationContextFactory(
+				webApplicationType -> new ReactiveWebServerApplicationContext());
 		application.run();
 		System.err.println(MARKER);
 	}

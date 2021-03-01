@@ -16,9 +16,10 @@
 package com.example.micro;
 
 import com.example.config.ApplicationBuilder;
+import reactor.core.publisher.Mono;
 
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
@@ -33,8 +34,6 @@ import org.springframework.web.server.WebExceptionHandler;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
-
-import reactor.core.publisher.Mono;
 
 /**
  * @author Dave Syer
@@ -80,10 +79,10 @@ public class MicroApplication {
 			GenericApplicationContext context) {
 		context.registerBean(ErrorAttributes.class, () -> new DefaultErrorAttributes());
 		context.registerBean(ErrorProperties.class, () -> new ErrorProperties());
-		context.registerBean(ResourceProperties.class, () -> new ResourceProperties());
+		context.registerBean(WebProperties.class, () -> new WebProperties());
 		DefaultErrorWebExceptionHandler handler = new DefaultErrorWebExceptionHandler(
 				context.getBean(ErrorAttributes.class),
-				context.getBean(ResourceProperties.class),
+				context.getBean(WebProperties.class).getResources(),
 				context.getBean(ErrorProperties.class), context);
 		ServerCodecConfigurer codecs = ServerCodecConfigurer.create();
 		handler.setMessageWriters(codecs.getWriters());

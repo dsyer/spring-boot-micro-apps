@@ -46,7 +46,7 @@ public class BootApplication {
 		long t0 = System.currentTimeMillis();
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(
 				BootApplication.class).web(WebApplicationType.NONE)
-						.contextClass(AnnotationConfigApplicationContext.class)
+						.contextFactory(type -> new AnnotationConfigApplicationContext())
 						.registerShutdownHook(false);
 		builder.application().setListeners(Collections.emptyList());
 		try (ConfigurableApplicationContext context = builder.run(args)) {

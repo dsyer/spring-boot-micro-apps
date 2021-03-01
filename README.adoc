@@ -51,6 +51,26 @@ The apps are already systematically benchmarked here with regular JVMs: https://
 
 == Benchmarks
 
+Spring Boot 2.4.3:
+
+```
+class           method  sample beans   classes  heap   memory  median  mean  range
+MicroBenchmark    main  empt  37.000  3492.000  5.047  36.515  0.528  0.543  0.012
+MicroBenchmark    main  react  ≈ 0    2191.000  6.269  31.371  0.235  0.240  0.009
+MicroBenchmark    main  micro  6.000  3240.000  7.416  40.326  0.330  0.341  0.010
+MicroBenchmark    main  mini  28.000  3827.000  7.370  43.582  0.473  0.480  0.009
+MicroBenchmark    main  func  45.000  3419.000  7.707  40.650  0.466  0.481  0.017
+MicroBenchmark    main  bunc  46.000  4129.000  6.200  43.422  0.554  0.581  0.047
+MicroBenchmark    main  cunc  52.000  4320.000  6.661  44.926  0.588  0.618  0.045
+MicroBenchmark    main  boot  29.000  3435.000  6.571  41.350  0.413  0.421  0.011
+MicroBenchmark    main  manl  57.000  4478.000  6.753  45.894  0.655  0.675  0.021
+MicroBenchmark    main  demo  108.000 4891.000  8.656  50.341  0.818  0.830  0.019
+ProfileBenchmark  main  jack  106.000 5270.000  10.205 54.235  0.851  0.874  0.029
+ProfileBenchmark  main  actr  186.000 5137.000  9.889  53.202  0.928  0.965  0.049
+ProfileBenchmark  main  jdbc  143.000 5119.000  9.801  52.861  0.884  0.914  0.028
+ProfileBenchmark  main  actj  227.000 5375.000  11.170 55.669  1.003  1.023  0.022
+```
+
 Spring Boot 2.3.0:
 
 ```
