@@ -208,6 +208,15 @@ public class ProcessLauncherState {
 			}
 		}
 		catch (Exception e) {
+			if (started != null) {
+				Method method = ReflectionUtils.findMethod(started.getClass(), "pid");
+				if (method!=null) {
+					// ReflectionUtils.makeAccessible(method);
+					pid = "" + ReflectionUtils.invokeMethod(method, started);
+				} else {
+					System.err.println("Cannot find PID for " + started);
+				}
+			}
 		}
 		return pid;
 	}

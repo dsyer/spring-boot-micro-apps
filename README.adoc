@@ -71,6 +71,18 @@ ProfileBenchmark  main  jdbc  143.000 5119.000  9.801  52.861  0.884  0.914  0.0
 ProfileBenchmark  main  actj  227.000 5375.000  11.170 55.669  1.003  1.023  0.022
 ```
 
+JDK 17 (EA):
+
+```
+class          method sample beans  classes    heap  memory  median  mean  range
+MicroBenchmark  main  empt  37.000  3854.000  6.133  31.948  0.490  0.511  0.020
+MicroBenchmark  main  demo  108.000 5262.000  9.216  44.461  0.751  0.772  0.029
+MicroBenchmark  main  manl  57.000  4864.000  8.269  41.515  0.625  0.656  0.037
+CdsBenchmark    main  empt  37.000  3942.000  6.184  23.773  0.302  0.325  0.017
+CdsBenchmark    main  demo  107.000 5709.000  9.715  27.987  0.434  0.444  0.016
+CdsBenchmark    main  manl  57.000  5470.000  8.897  26.995  0.346  0.365  0.021
+```
+
 Spring Boot 2.3.0:
 
 ```

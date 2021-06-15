@@ -51,7 +51,7 @@ public class ProcessLauncherStateTests {
 	}
 
 	@Test
-	@EnabledOnJre({ JRE.JAVA_11, JRE.JAVA_14 })
+	@EnabledOnJre({ JRE.JAVA_11, JRE.JAVA_14, JRE.JAVA_17 })
 	public void cds(CapturedOutput output) throws Exception {
 		CdsState state = new CdsState();
 		state.sample = Sample.demo;

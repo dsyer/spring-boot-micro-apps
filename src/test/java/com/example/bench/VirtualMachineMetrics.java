@@ -58,6 +58,7 @@ public class VirtualMachineMetrics {
 			return metrics;
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			return Collections.emptyMap();
 		}
 	}

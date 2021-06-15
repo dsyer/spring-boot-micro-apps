@@ -79,7 +79,7 @@ public class CdsBenchmark {
 
 		private static final String APP_JSA = "app.jsa";
 
-		@Param // ({ "demo"})
+		@Param({ "empt", "demo", "manl" }) // ({ "demo"})
 		Sample sample = Sample.demo;
 
 		@Override

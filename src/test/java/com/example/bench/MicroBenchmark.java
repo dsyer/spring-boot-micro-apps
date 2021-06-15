@@ -81,7 +81,7 @@ public class MicroBenchmark {
 
 		}
 
-		@Param // ({ "empt", "demo", "manl" })
+		@Param({ "empt", "demo", "manl" })
 		private Sample sample;
 
 		public MainState() {
