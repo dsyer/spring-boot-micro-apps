@@ -18,6 +18,8 @@
     "--mount",
     "type=bind,source=${env:HOME}/.vscode,target=${env:HOME}/.vscode",
     "--mount",
+    "type=bind,source=${env:HOME}/.vscode-server,target=${env:HOME}/.vscode-server",
+    "--mount",
     "type=bind,source=${env:HOME}/.ssh,target=${env:HOME}/.ssh",
     "--mount",
     "type=bind,source=${env:HOME}/.m2,target=${env:HOME}/.m2"
