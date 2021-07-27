@@ -162,12 +162,25 @@ MiniBenchmark  mini   demo  27.000  3732.000  5.969  43.726  0.631  0.636  0.007
 
 == Building a Native Image
 
-All the apps are compilable to a native binary image using the Graal tools once you have Andy's https://github.com/spring-projects-experimental/spring-graal-feature[Spring Graal Feature library] - just clone it and `mvn install` it.
+All the apps are compilable to a native binary image using the Graal tools once you have the https://github.com/spring-projects-experimental/spring-native[Spring Native library].
 
-Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it. You will need GraalVM 19.0.
+=== Using a Buildpack
+
+There is a "native" profile that builds the app into a native executable in a docker image:
+
+```
+$ mvn package spring-boot:build-image -P native
+$ docker run -p 8080:8080 micro:0.0.1-SNAPSHOT
+```
+
+=== Using the Thin Jar
+
+The Jar that is built by default is a thin executable and it can be used to calculate its own classpath for runtime. This can then be used to build a native image for any of the provided apps and classpath combinations.
+
+Download https://github.com/oracle/graal/releases[GraalVM] and install it (add the bin dir to you path and set the `JAVA_HOME` to point to GraalVM). You can also use https://sdkman.io/[sdkman] to download it. You will need GraalVM 21.0.
 
 Compute the classpath using the `graal` profile so that we can work around some limitations{blank}footnote:[Log4j with java.util logging doesn't work at the moment.
-] of the Graal Features library:
+] of the Spring Native library:
 
 ```
 $ CP=`java -jar target/micro-0.0.1-SNAPSHOT.jar --thin.classpath --thin.profile=graal`
@@ -176,43 +189,17 @@ $ CP=`java -jar target/micro-0.0.1-SNAPSHOT.jar --thin.classpath --thin.profile=
 Then build an image:
 
 ```
-$ native-image -Dio.netty.noUnsafe=true --no-server -H:Name=target/micro -H:+ReportExceptionStackTraces --no-fallback --allow-incomplete-classpath --report-unsupported-elements-at-runtime -cp $CP com.example.micro.MicroApplication
+$ ./mvnw spring-boot:build-image -P native
 ```
 
 Then run it:
 
 ```
-$ ./target/micro 
+$ docker run micro:0.0.1-SNAPSHOT
 Started HttpServer: 2ms
 ```
 
 Excellent!
 
-You can do the same with all the applications in this project, including `DemoApplication` (full Spring Boot):
-
-```
-$ native-image -Dio.netty.noUnsafe=true --no-server -H:Name=target/demo -H:+ReportExceptionStackTraces --no-fallback --allow-incomplete-classpath --report-unsupported-elements-at-runtime -cp $CP com.example.demo.DemoApplication
-$ ./target/demo
-
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::                        
-
-Aug 07, 2018 11:25:13 AM org.springframework.boot.StartupInfoLogger logStarting
-INFO: Starting application on tower with PID 11253 (started by dsyer in /home/dsyer/dev/demo/workspace/micro)
-Aug 07, 2018 11:25:13 AM org.springframework.boot.SpringApplication logStartupProfileInfo
-INFO: No active profile set, falling back to default profiles: default
-Aug 07, 2018 11:25:13 AM org.springframework.boot.web.embedded.netty.NettyWebServer start
-INFO: Netty started on port(s): 8080
-Aug 07, 2018 11:25:13 AM org.springframework.boot.StartupInfoLogger logStarted
-INFO: Started application in 0.036 seconds (JVM running for 0.04)
-Benchmark app started
-Started HttpServer: 40ms
-```
-
-Note that whenever `@Configuration` is used, including in meta annotations like `@SpringBootApplication`, it must have the `proxyBeanMethods = false` flag set. CGLib is not friendly with GraalVM native images.
+You can do the same with some of the other applications in this project. It definitely works with `DemoApplication` (full Spring Boot) and `FuncApplication` (manual functional configuration).
 
