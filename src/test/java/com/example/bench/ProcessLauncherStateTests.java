@@ -16,25 +16,33 @@
 
 package com.example.bench;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.File;
+
 import com.example.bench.CdsBenchmark.CdsState;
 import com.example.bench.CdsBenchmark.CdsState.Sample;
 import com.example.reactor.ReactorApplication;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIf;
 import org.junit.jupiter.api.condition.EnabledOnJre;
 import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Dave Syer
  *
  */
 @ExtendWith(OutputCaptureExtension.class)
+@DisabledIf("noJarInTargetDir")
 public class ProcessLauncherStateTests {
+
+	public static boolean noJarInTargetDir() {
+		return !new File("target/micro-0.0.1-SNAPSHOT.jar").exists();
+	}
 
 	@Test
 	public void vanilla(CapturedOutput output) throws Exception {
