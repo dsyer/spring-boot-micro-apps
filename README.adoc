@@ -8,7 +8,7 @@ image::https://gitpod.io/button/open-in-gitpod.svg[Open in Gitpod,link="https://
 Build the jar:
 
 ```
-$ ./mvnw clean install
+$ ./mvnw clean install -DskipTests
 ```
 
 Run it
@@ -50,6 +50,18 @@ The `thin.profile` could be empty (the default) for just `spring-boot-starter-we
 The apps are already systematically benchmarked here with regular JVMs: https://github.com/dsyer/spring-boot-startup-bench/blob/master/flux/README.adoc. The point of this project is just to extract them out of the JMH benchmarks, and make them easily executable as standalone apps. In the benchmarks, the "jack" profile is the default, and "jlog" is the faster reduced set of dependencies.
 
 == Benchmarks
+
+Spring Boot 2.5.4 (Java 17):
+
+```
+class           method  sample beans   classes   heap   memory  median mean  range
+MicroBenchmark  main    empt   43.000  4003.000  6.796  33.240  0.544  0.564 0.022
+MicroBenchmark  main    demo   117.000 5462.000  10.169 46.527  0.817  0.870 0.095
+MicroBenchmark  main    manl   58.000  4935.000  8.848  42.608  0.616  0.650 0.053
+CdsBenchmark    main    empt   43.000  4094.000  6.857  24.568  0.351  0.380 0.032
+CdsBenchmark    main    demo   116.000 5938.000  10.663 29.255  0.471  0.496 0.033
+CdsBenchmark    main    manl   58.000  5565.000  9.513  27.864  0.385  0.396 0.012
+```
 
 Spring Boot 2.4.3:
 
