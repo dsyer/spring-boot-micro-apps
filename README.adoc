@@ -64,6 +64,14 @@ CdsBenchmark   main    demo   121.000  6081.000  11.122 30.677  0.497  0.521 0.0
 CdsBenchmark   main    manl   57.000   5669.000  9.871  29.126  0.393  0.410 0.021
 ```
 
+with AOT:
+
+```
+class          method  sample beans    classes   heap   memory  median mean  range
+MicroBenchmark main    demo   118.000  5296.000  9.448  53.407  0.785  0.814 0.026
+CdsBenchmark   main    demo   118.000  5917.000  10.576 30.216  0.418  0.440 0.032
+```
+
 Spring Boot 2.7.3 (Java 17):
 
 ```
