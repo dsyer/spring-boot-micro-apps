@@ -51,6 +51,18 @@ The apps are already systematically benchmarked here with regular JVMs: https://
 
 == Benchmarks
 
+Spring Boot 2.7.3 (Java 17):
+
+```
+class          method sample  beans  classes   heap   memory  median mean  range
+MicroBenchmark main   empt  43.000   4025.000  6.862  33.436  0.562  0.586 0.030
+MicroBenchmark main   demo  122.000  5548.000  10.442 48.377  0.848  0.902 0.056
+MicroBenchmark main   manl  57.000   4998.000  9.005  44.235  0.634  0.659 0.024
+CdsBenchmark   main   empt  43.000   4109.000  6.917  24.652  0.365  0.391 0.033
+CdsBenchmark   main   demo  121.000  6023.000  10.882 30.494  0.492  0.514 0.020
+CdsBenchmark   main   manl  57.000   5626.000  9.683  29.026  0.382  0.402 0.021
+````
+
 Spring Boot 2.5.4 (Java 17):
 
 ```
