@@ -71,7 +71,19 @@ ProfileBenchmark  main  jdbc  143.000 5119.000  9.801  52.861  0.884  0.914  0.0
 ProfileBenchmark  main  actj  227.000 5375.000  11.170 55.669  1.003  1.023  0.022
 ```
 
-JDK 17 (EA):
+JDK 18 (EA):
+
+```
+class         method  sample  beans  classes  heap    memory  median  mean  range
+MicroBenchmark  main  empt   43.000  3991.000  6.397  32.698  0.550  0.561  0.016
+MicroBenchmark  main  demo  117.000  5451.000  9.655  45.752  0.818  0.843  0.027
+MicroBenchmark  main  manl   58.000  4925.000  9.328  42.846  0.624  0.643  0.019
+CdsBenchmark    main  empt   43.000  4084.000  6.469  24.158  0.342  0.352  0.013
+CdsBenchmark    main  demo  116.000  5932.000  10.228 28.771  0.471  0.491  0.033
+CdsBenchmark    main  manl   58.000  5556.000  9.106  27.410  0.356  0.371  0.020
+```
+
+JDK 17:
 
 ```
 class          method sample beans  classes    heap  memory  median  mean  range
