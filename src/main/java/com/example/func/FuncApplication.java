@@ -38,6 +38,7 @@ import org.springframework.boot.autoconfigure.web.reactive.WebFluxRegistrations;
 import org.springframework.boot.autoconfigure.web.reactive.error.ErrorWebFluxAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
+import org.springframework.boot.ssl.SslBundle;
 import org.springframework.boot.web.codec.CodecCustomizer;
 import org.springframework.boot.web.embedded.netty.NettyReactiveWebServerFactory;
 import org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext;
@@ -255,7 +256,10 @@ public class FuncApplication implements Runnable, Closeable,
 		ReactiveWebServerFactoryAutoConfiguration config = new ReactiveWebServerFactoryAutoConfiguration();
 		context.registerBean(ReactiveWebServerFactoryCustomizer.class,
 				() -> config.reactiveWebServerFactoryCustomizer(
-						context.getBean(ServerProperties.class)));
+						context.getBean(ServerProperties.class),
+						context.getDefaultListableBeanFactory()
+								.getBeanProvider(ResolvableType.forClassWithGenerics(
+										List.class, SslBundle.class))));
 		context.registerBean(NettyReactiveWebServerFactory.class,
 				() -> new NettyReactiveWebServerFactory());
 	}
