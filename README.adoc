@@ -72,6 +72,15 @@ MicroBenchmark main    demo   118.000  5296.000  9.448  53.407  0.785  0.814 0.0
 CdsBenchmark   main    demo   118.000  5917.000  10.576 30.216  0.418  0.440 0.032
 ```
 
+Java 19:
+
+```
+class         method  sample  beans   classes  heap   memory  median mean  range
+CdsBenchmark  main    empt    43.000  4313.000 8.173  26.725  0.363  0.387 0.040
+CdsBenchmark  main    demo    121.000 6193.000 10.888 30.987  0.496  0.523 0.032
+CdsBenchmark  main    manl    57.000  5817.000 10.675 30.585  0.376  0.410 0.056
+```
+
 Spring Boot 2.7.3 (Java 17):
 
 ```

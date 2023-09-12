@@ -1,48 +1,29 @@
 {
-  "name": "Java",
-  "dockerFile": "Dockerfile",
-  "build": {
-    "args": {
-      "USER": "${env:USER}",
-      "USER_ID": 1000, // VSCode adjusts the IDs when it builds
-      "USER_GID": 1000
-    }
-  },
-  "runArgs": [
-    "--hostname",
-    "docker",
-    "--privileged",
-    "--cap-add=SYS_PTRACE",
-    "--security-opt",
-    "seccomp=unconfined",
-    "--mount",
-    "type=bind,source=${env:HOME}/.vscode,target=${env:HOME}/.vscode",
-    "--mount",
-    "type=bind,source=${env:HOME}/.vscode-server,target=${env:HOME}/.vscode-server",
-    "--mount",
-    "type=bind,source=${env:HOME}/.ssh,target=${env:HOME}/.ssh",
-    "--mount",
-    "type=bind,source=${env:HOME}/.m2,target=${env:HOME}/.m2"
-  ],
-  "remoteUser": "${env:USER}",
-
-  // Use 'settings' to set *default* container specific settings.json values on container create.
-  // You can edit these settings after create using File > Preferences > Settings > Remote.
-  "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash",
-    "remote.extensionKind": {
-      "ms-azuretools.vscode-docker": "workspace",
-      "vscjava.vscode-java-pack": "workspace"
-    }
-  },
-
-  // Uncomment the next line if you want to publish any ports. Or use the Remote Explorer to open
-  // up ports in a running container.
-  // "appPort": [8080],
-
-  // Uncomment the next line to run commands after the container is created.
-  // "postCreateCommand": "java -version",
-
-  // Add the IDs of extensions you want installed when the container is created in the array below.
-  "extensions": ["vscjava.vscode-java-pack"]
+	"name": "loom-playground",
+	"dockerFile": "Dockerfile",
+	"runArgs": [
+		"--cap-add=SYS_PTRACE",
+		"--security-opt",
+		"seccomp=unconfined",
+		"--mount",
+		"type=bind,source=${env:HOME}/.m2,target=/home/vscode/.m2"
+	],
+	"initializeCommand": "mkdir -p ${env:HOME}/.m2",
+	"postCreateCommand": "sudo chown vscode:vscode /home/vscode/.m2",
+	"remoteUser": "vscode",
+	"features": {
+		"docker-in-docker": "latest"
+	},
+	"extensions": [
+		"vscjava.vscode-java-pack",
+		"redhat.vscode-xml",
+		"Pivotal.vscode-boot-dev-pack",
+		"mhutchie.git-graph",
+		// N.B. might need to install the pre-release version manually
+		"redhat.java"
+	],
+	"settings": {
+		"java.server.launchMode": "Standard",
+		"java.jdt.ls.java.home": "/usr/local/sdkman/candidates/java/current"
+	}
 }

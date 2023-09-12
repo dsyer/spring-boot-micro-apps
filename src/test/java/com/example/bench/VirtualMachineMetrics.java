@@ -37,7 +37,7 @@ public class VirtualMachineMetrics {
 
 	static final String CONNECTOR_ADDRESS = "com.sun.management.jmxremote.localConnectorAddress";
 
-	public static Map<String, Long> fetch(String pid) {
+	public static Map<String, Number> fetch(String pid) {
 		if (pid == null) {
 			return Collections.emptyMap();
 		}
@@ -50,10 +50,11 @@ public class VirtualMachineMetrics {
 			JMXConnector connector = JMXConnectorFactory.connect(url);
 			MBeanServerConnection connection = connector.getMBeanServerConnection();
 			gc(connection);
-			Map<String, Long> metrics = new HashMap<>(
+			Map<String, Number> metrics = new HashMap<>(
 					new BufferPools(connection).getMetrics());
 			metrics.putAll(new Threads(connection).getMetrics());
 			metrics.putAll(new Classes(connection).getMetrics());
+			metrics.putAll(new OperatingSystem(connection).getMetrics());
 			vm.detach();
 			return metrics;
 		}
@@ -74,11 +75,11 @@ public class VirtualMachineMetrics {
 		}
 	}
 
-	public static long total(Map<String, Long> metrics) {
+	public static long total(Map<String, Number> metrics) {
 		return BufferPools.total(metrics);
 	}
 
-	public static long heap(Map<String, Long> metrics) {
+	public static long heap(Map<String, Number> metrics) {
 		return BufferPools.heap(metrics);
 	}
 
@@ -142,6 +143,37 @@ class Classes {
 
 }
 
+
+
+class OperatingSystem {
+
+	private final MBeanServerConnection mBeanServer;
+
+	public OperatingSystem(MBeanServerConnection mBeanServer) {
+		this.mBeanServer = mBeanServer;
+	}
+
+	public Map<String, Double> getMetrics() {
+		final Map<String, Double> gauges = new HashMap<>();
+		final String name = "CpuLoad";
+		try {
+			final ObjectName on = new ObjectName("java.lang:type=OperatingSystem");
+			mBeanServer.getMBeanInfo(on);
+			Double value = (Double) mBeanServer.getAttribute(on, "CpuLoad");
+			gauges.put(name(name), Double.valueOf(value));
+		}
+		catch (Exception ignored) {
+			System.err.println("Unable to load cpu MBeans: " + name);
+		}
+		return Collections.unmodifiableMap(gauges);
+	}
+
+	private static String name(String name) {
+		return name.replace(" ", "-");
+	}
+
+}
+
 class BufferPools {
 
 	private static final String[] ATTRIBUTES = { "Code Cache", "Compressed Class Space",
@@ -155,22 +187,22 @@ class BufferPools {
 		this.mBeanServer = mBeanServer;
 	}
 
-	public static long total(Map<String, Long> metrics) {
+	public static long total(Map<String, Number> metrics) {
 		long total = 0;
 		for (int i = 0; i < ATTRIBUTES.length; i++) {
 			final String name = name(ATTRIBUTES[i]);
-			total += metrics.containsKey(name) ? metrics.get(name) : 0;
+			total += (Long)(metrics.containsKey(name) ? metrics.get(name) : 0L);
 		}
-		total += metrics.getOrDefault("Threads", 0L);
+		total += (Long)metrics.getOrDefault("Threads", 0L);
 		return total;
 	}
 
-	public static long heap(Map<String, Long> metrics) {
+	public static long heap(Map<String, Number> metrics) {
 		long total = 0;
 		for (int i = 0; i < ATTRIBUTES.length; i++) {
 			final String name = name(ATTRIBUTES[i]);
 			if (name.startsWith("PS") || name.startsWith("G1")) {
-				total += metrics.containsKey(name) ? metrics.get(name) : 0;
+				total += (Long)(metrics.containsKey(name) ? metrics.get(name) : 0L);
 			}
 		}
 		return total;

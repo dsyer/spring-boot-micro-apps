@@ -1,16 +1,12 @@
-FROM ubuntu:bionic
-ENV JAVA_HOME /opt/jdk/jdk-18
-ENV PATH $JAVA_HOME/bin:$PATH
+# See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/java/.devcontainer/base.Dockerfile
 
-ADD https://download.java.net/java/early_access/jdk18/21/GPL/openjdk-18-ea+21_linux-x64_bin.tar.gz /opt/jdk/jdk.tgz
-RUN tar -xzvf /opt/jdk/jdk.tgz -C /opt/jdk/
+# [Choice] Java version (use -bullseye variants on local arm64/Apple Silicon): 11, 17, 11-bullseye, 17-bullseye, 11-buster, 17-buster
+ARG VARIANT=17-bullseye
+FROM mcr.microsoft.com/vscode/devcontainers/java:0-${VARIANT}
 
-ARG USER
-ARG USER_ID
-ARG USER_GID
+ARG USER=vscode
 
-# Configure apt, install packages and tools
-RUN (groupadd --gid $USER_GID $USER || echo "Group already exists" ) \
-    && useradd -s /bin/bash --uid $USER_ID --gid $USER_GID -m $USER
+VOLUME /home/$USER/.m2
 
-ENV PATH $PATH:/opt/jdk/bin
+RUN bash -lc '. /usr/local/sdkman/bin/sdkman-init.sh && sdk install java 19-amzn && sdk use java 19-amzn'
+RUN sudo mkdir /home/$USER/.m2 && sudo chown $USER:$USER /home/$USER/.m2

@@ -62,6 +62,7 @@ import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.server.reactive.HttpHandler;
+import org.springframework.lang.Nullable;
 import org.springframework.validation.Validator;
 import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.reactive.HandlerMapping;
@@ -107,11 +108,11 @@ public class FuncApplication implements Runnable, Closeable,
 	public RouterFunction<?> userEndpoints() {
 		return route(GET("/"),
 				request -> ok().body(Mono.just("Hello"), String.class))
-						.andRoute(POST("/"),
-								request -> ok().body(
-										request.bodyToFlux(String.class)
-												.map(value -> value.toUpperCase()),
-										String.class));
+				.andRoute(POST("/"),
+						request -> ok().body(
+								request.bodyToFlux(String.class)
+										.map(value -> value.toUpperCase()),
+								String.class));
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -139,8 +140,7 @@ public class FuncApplication implements Runnable, Closeable,
 		try {
 			logger.info("Class count: " + id + "=" + ManagementFactory
 					.getClassLoadingMXBean().getTotalLoadedClassCount());
-		}
-		catch (Throwable e) {
+		} catch (Throwable e) {
 		}
 	}
 
@@ -202,7 +202,7 @@ public class FuncApplication implements Runnable, Closeable,
 		}
 
 		@Override
-		public Object convert(Object source, TypeDescriptor sourceType,
+		public Object convert(@Nullable Object source, TypeDescriptor sourceType,
 				TypeDescriptor targetType) {
 			return null;
 		}
@@ -221,16 +221,14 @@ public class FuncApplication implements Runnable, Closeable,
 				public void runSafely(Runnable runnable) {
 					try {
 						runnable.run();
-					}
-					catch (Throwable ex) {
+					} catch (Throwable ex) {
 						// Ignore
 					}
 				}
 
 			}, "background-preinit");
 			thread.start();
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 		}
 	}
 
@@ -417,7 +415,7 @@ public class FuncApplication implements Runnable, Closeable,
 class EnableWebFluxConfigurationWrapper extends EnableWebFluxConfiguration {
 
 	public EnableWebFluxConfigurationWrapper(WebFluxProperties webFluxProperties,
-			WebProperties webProperties, ServerProperties serverProperties, 
+			WebProperties webProperties, ServerProperties serverProperties,
 			ObjectProvider<WebFluxRegistrations> webFluxRegistrations) {
 		super(webFluxProperties, webProperties, serverProperties, webFluxRegistrations);
 	}

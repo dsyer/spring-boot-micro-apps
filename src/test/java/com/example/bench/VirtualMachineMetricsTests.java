@@ -31,9 +31,10 @@ public class VirtualMachineMetricsTests {
 
 	@Test
 	public void vanilla() throws Exception {
-		Map<String, Long> metrics = VirtualMachineMetrics.fetch(new ApplicationPid().toString());
+		Map<String, Number> metrics = VirtualMachineMetrics.fetch(new ApplicationPid().toString());
 		assertThat(metrics).containsKeys("Classes");
 		assertThat(VirtualMachineMetrics.heap(metrics)).isGreaterThan(0);
+		System.err.println(metrics);
 	}
 
 }

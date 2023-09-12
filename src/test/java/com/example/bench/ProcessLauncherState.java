@@ -225,7 +225,7 @@ public class ProcessLauncherState {
 		drain();
 		if (started != null && started.isAlive()) {
 			latch.await(10, TimeUnit.SECONDS);
-			Map<String, Long> metrics = VirtualMachineMetrics.fetch(getPid());
+			Map<String, Number> metrics = VirtualMachineMetrics.fetch(getPid());
 			this.memory = VirtualMachineMetrics.total(metrics);
 			this.heap = VirtualMachineMetrics.heap(metrics);
 			if (metrics.containsKey("Classes")) {

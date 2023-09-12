@@ -24,6 +24,8 @@ import com.example.demo.DemoApplication;
 import com.example.empt.EmptyApplication;
 import com.example.manual.ManualApplication;
 import jmh.mbr.junit5.Microbenchmark;
+
+import org.junit.platform.commons.annotation.Testable;
 import org.openjdk.jmh.annotations.AuxCounters;
 import org.openjdk.jmh.annotations.AuxCounters.Type;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -48,6 +50,7 @@ import org.openjdk.jmh.util.FileUtils;
 public class CdsBenchmark {
 
 	@Benchmark
+	@Testable
 	public void main(CdsState state) throws Exception {
 		state.run();
 	}
